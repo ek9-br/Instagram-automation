@@ -92,6 +92,15 @@ export default function JobResult({ jobId }: { jobId: string }) {
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  // lightbox para ampliar a imagem gerada
+  const [lightbox, setLightbox] = useState<string | null>(null);
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setLightbox(null);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightbox]);
+
   async function reload() {
     const j = await fetchJob(jobId);
     setJob(j);
@@ -249,6 +258,21 @@ export default function JobResult({ jobId }: { jobId: string }) {
 
   return (
     <div className="job-result">
+      {lightbox && (
+        <div className="lightbox" onClick={() => setLightbox(null)}>
+          <div className="lightbox-inner" onClick={(e) => e.stopPropagation()}>
+            <img src={lightbox} alt="Imagem gerada (ampliada)" />
+            <div className="lightbox-actions">
+              <a className="btn small" href={lightbox} target="_blank" rel="noreferrer">
+                Abrir original ↗
+              </a>
+              <button className="btn small" onClick={() => setLightbox(null)}>
+                Fechar ✕
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {!isError ? (
         <StatusTimeline status={job.status} />
       ) : (
@@ -378,17 +402,33 @@ export default function JobResult({ jobId }: { jobId: string }) {
                       </span>
                     )}
                     {imgByIdx[i] && (
-                      <img className="prompt-thumb" src={imgByIdx[i]} alt={`Imagem ${i + 1}`} />
+                      <img
+                        className="prompt-thumb"
+                        src={imgByIdx[i]}
+                        alt={`Imagem ${i + 1}`}
+                        title="Clique para ampliar"
+                        onClick={() => setLightbox(imgByIdx[i])}
+                      />
                     )}
                     {sgByIdx[i] && (
                       <figure className="sg-thumb">
-                        <img src={sgByIdx[i]} alt={`Safe guard ${i + 1}`} />
+                        <img
+                          src={sgByIdx[i]}
+                          alt={`Safe guard ${i + 1}`}
+                          title="Clique para ampliar"
+                          onClick={() => setLightbox(sgByIdx[i])}
+                        />
                         <figcaption>safe guard</figcaption>
                       </figure>
                     )}
                     {natByIdx[i] && (
                       <figure className="sg-thumb">
-                        <img src={natByIdx[i]} alt={`Safe guard natural ${i + 1}`} />
+                        <img
+                          src={natByIdx[i]}
+                          alt={`Safe guard natural ${i + 1}`}
+                          title="Clique para ampliar"
+                          onClick={() => setLightbox(natByIdx[i])}
+                        />
                         <figcaption>natural</figcaption>
                       </figure>
                     )}

@@ -99,6 +99,40 @@ body {
     transform: rotate(360deg);
   }
 }
+/* Lightbox: amplia a imagem gerada em um popup grande. */
+.prompt-thumb,
+.sg-thumb img {
+  cursor: zoom-in;
+}
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+}
+.lightbox-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  max-width: 94vw;
+  max-height: 94vh;
+}
+.lightbox-inner img {
+  max-width: 94vw;
+  max-height: 84vh;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+}
+.lightbox-actions {
+  display: flex;
+  gap: 10px;
+}
 
 /* Planilha */
 .table-wrap {
