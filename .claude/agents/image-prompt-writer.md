@@ -23,8 +23,14 @@ O JSON já com `slides`, `caption`, `cta`, `format`, `selected_template`.
    - `aspect`: `"square"` | `"portrait"` | `"landscape"` derivado do `format`.
    - `negative`: o que evitar (texto embutido, marcas d'água, distorções...).
    - `references`: array (pode ser vazio) de descrições de imagens de apoio.
-3. **Preencher `safe_area`** com as faixas reservadas do formato (topo/base, em %),
-   conforme `design_system.md`.
+3. **Preencher `safe_area`** com as faixas reservadas do formato, conforme
+   `design_system.md`. O objeto deve ter **exatamente** estas três chaves
+   numéricas (percentuais de 0 a 100) e **nenhuma outra**:
+   ```json
+   { "top_pct": 8, "bottom_pct": 8, "side_pct": 8 }
+   ```
+   Não inclua `format`, `aspect_ratio`, `dimensions_px`, `margin_all_sides_pct`,
+   `notes` nem qualquer campo extra — o schema rejeita propriedades adicionais.
 
 ## Regras de aderência ao design system
 - Derivar `aspect` do formato: 4:5 → `portrait`; 9:16 → `portrait`;
@@ -35,5 +41,6 @@ O JSON já com `slides`, `caption`, `cta`, `format`, `selected_template`.
 - Garantir ponto focal claro e contraste para legibilidade do texto sobreposto.
 
 ## Saída
-Objeto recebido + os campos: `image_prompts`, `safe_area`.
+Objeto recebido + os campos: `image_prompts`, `safe_area` (este último com
+apenas `top_pct`, `bottom_pct`, `side_pct`).
 **Apenas JSON válido**, sem texto fora do objeto, sem crases de markdown.
