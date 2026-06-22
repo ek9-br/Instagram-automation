@@ -363,6 +363,7 @@ export default function JobResult({ jobId }: { jobId: string }) {
                     <button
                       className="btn primary small"
                       disabled={!approved || busyIdx !== null}
+                      title={!approved ? "Aprove o post antes de gerar as imagens" : undefined}
                       onClick={() => void gerarImagem(i, p.prompt, p.aspect)}
                     >
                       {busyIdx === i
@@ -371,6 +372,11 @@ export default function JobResult({ jobId }: { jobId: string }) {
                           ? "Gerar nova versão"
                           : "Gerar imagem"}
                     </button>
+                    {busyIdx === i && (
+                      <span className="gen-status">
+                        <span className="spinner" /> Gerando imagem na OpenAI… pode levar ~1 min.
+                      </span>
+                    )}
                     {imgByIdx[i] && (
                       <img className="prompt-thumb" src={imgByIdx[i]} alt={`Imagem ${i + 1}`} />
                     )}

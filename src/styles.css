@@ -65,6 +65,40 @@ body {
   border-color: transparent;
   color: var(--muted);
 }
+/* Botão desabilitado: visivelmente bloqueado (sem isso parecia clicável). */
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn:disabled:hover {
+  border-color: var(--border);
+}
+.btn.primary:disabled:hover {
+  background: var(--primary);
+}
+/* Indicador de geração de imagem em andamento. */
+.gen-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* Planilha */
 .table-wrap {
