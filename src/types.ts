@@ -108,3 +108,47 @@ export interface Creative {
 export function creativeFormatOf(c: Creative): CreativeFormat | undefined {
   return CREATIVE_FORMATS.find((f) => f.id === c.formatId);
 }
+
+// ---- Safezone do Instagram (2026) — margens reservadas pela UI, por formato ----
+// Percentuais da imagem. O conteúdo importante (texto, logo, rosto) deve ficar
+// DENTRO da área central (fora destas faixas).
+
+export interface SafezoneSpec {
+  top: number; // % reservado no topo
+  bottom: number; // % reservado na base
+  left: number; // % reservado à esquerda
+  right: number; // % reservado à direita
+  zones: { side: "top" | "bottom" | "left" | "right"; label: string }[];
+}
+
+export const INSTAGRAM_SAFEZONES: Record<string, SafezoneSpec> = {
+  // Reels/Stories: topo (perfil/ícones), base (legenda, áudio, CTA, barra de
+  // resposta) e coluna direita (curtir/comentar/enviar/salvar).
+  "9_16": {
+    top: 13,
+    bottom: 21,
+    left: 4,
+    right: 17,
+    zones: [
+      { side: "top", label: "Perfil / ícones" },
+      { side: "right", label: "Botões" },
+      { side: "bottom", label: "Legenda · áudio · CTA" },
+    ],
+  },
+  // Feed 4:5 — margem de segurança nas bordas (e a base, onde fica a legenda).
+  "4_5": {
+    top: 5,
+    bottom: 9,
+    left: 5,
+    right: 5,
+    zones: [{ side: "bottom", label: "Borda / legenda" }],
+  },
+  // Feed 3:4 — idem, com um pouco mais de respiro vertical.
+  "3_4": {
+    top: 5,
+    bottom: 9,
+    left: 5,
+    right: 5,
+    zones: [{ side: "bottom", label: "Borda / legenda" }],
+  },
+};

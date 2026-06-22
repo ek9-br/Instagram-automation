@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CREATIVE_FORMATS, creativeFormatOf } from "../types";
-import type { Creative, CreativeStatus } from "../types";
+import { CREATIVE_FORMATS, creativeFormatOf, INSTAGRAM_SAFEZONES } from "../types";
+import type { Creative, CreativeStatus, SafezoneSpec } from "../types";
 import {
   deleteCreative,
   newCreativeId,
@@ -44,7 +44,13 @@ export default function CriativosPage() {
   const creatives = useCreatives();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const [lightbox, setLightbox] = useState<string | null>(null);
+  const [lightbox, setLightbox] = useState<{ url: string; formatId: string } | null>(null);
+  const [showSafezone, setShowSafezone] = useState(false);
+
+  function openLightbox(url: string, formatId: string) {
+    setShowSafezone(false);
+    setLightbox({ url, formatId });
+  }
 
   async function logout() {
     await signOut();
@@ -123,7 +129,7 @@ export default function CriativosPage() {
     return "—";
   }
 
-  function Thumb({ url, caption }: { url: string; caption: string }) {
+  function Thumb({ url, caption, formatId }: { url: string; caption: string; formatId: string }) {
     return (
       <figure className="cre-fig">
         <img
@@ -131,7 +137,7 @@ export default function CriativosPage() {
           src={url}
           alt={caption}
           title="Clique para ampliar"
-          onClick={() => setLightbox(url)}
+          onClick={() => openLightbox(url, formatId)}
         />
         <figcaption>{caption}</figcaption>
       </figure>
@@ -230,9 +236,11 @@ export default function CriativosPage() {
                 </td>
                 <td>
                   <div className="cre-results">
-                    {c.rawUrl && <Thumb url={c.rawUrl} caption="Gerada" />}
-                    {c.safezoneUrl && <Thumb url={c.safezoneUrl} caption="Safezone" />}
-                    {c.finalUrl && <Thumb url={c.finalUrl} caption="Final" />}
+                    {c.rawUrl && <Thumb url={c.rawUrl} caption="Gerada" formatId={c.formatId} />}
+                    {c.safezoneUrl && (
+                      <Thumb url={c.safezoneUrl} caption="Safezone" formatId={c.formatId} />
+                    )}
+                    {c.finalUrl && <Thumb url={c.finalUrl} caption="Final" formatId={c.formatId} />}
                     {!c.rawUrl && <span className="muted small">—</span>}
                   </div>
                 </td>
@@ -290,21 +298,80 @@ export default function CriativosPage() {
         </table>
       </div>
 
-      {lightbox && (
-        <div className="lightbox" onClick={() => setLightbox(null)}>
-          <div className="lightbox-inner" onClick={(e) => e.stopPropagation()}>
-            <img src={lightbox} alt="Criativo (ampliado)" />
-            <div className="lightbox-actions">
-              <a className="btn small" href={lightbox} target="_blank" rel="noreferrer">
-                Abrir original ↗
-              </a>
-              <button className="btn small" onClick={() => setLightbox(null)}>
-                Fechar ✕
-              </button>
+      {lightbox &&
+        (() => {
+          const fmt = CREATIVE_FORMATS.find((f) => f.id === lightbox.formatId);
+          const sz = INSTAGRAM_SAFEZONES[lightbox.formatId];
+          return (
+            <div className="lightbox" onClick={() => setLightbox(null)}>
+              <div className="lightbox-inner" onClick={(e) => e.stopPropagation()}>
+                <div
+                  className="lightbox-frame"
+                  style={fmt ? { aspectRatio: `${fmt.w} / ${fmt.h}` } : undefined}
+                >
+                  <img src={lightbox.url} alt="Criativo (ampliado)" />
+                  {showSafezone && sz && <SafezoneOverlay spec={sz} />}
+                </div>
+                <div className="lightbox-actions">
+                  <button
+                    className={`btn small ${showSafezone ? "primary" : ""}`}
+                    onClick={() => setShowSafezone((v) => !v)}
+                  >
+                    {showSafezone ? "Ocultar safezone" : "Preview safezone"}
+                  </button>
+                  <a className="btn small" href={lightbox.url} target="_blank" rel="noreferrer">
+                    Abrir original ↗
+                  </a>
+                  <button className="btn small" onClick={() => setLightbox(null)}>
+                    Fechar ✕
+                  </button>
+                </div>
+                {showSafezone && fmt && (
+                  <span className="muted small">
+                    Safezone Instagram 2026 — {fmt.label}. Mantenha texto/logo/rosto na área
+                    central (tracejado).
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          );
+        })()}
+    </div>
+  );
+}
+
+// Overlay das margens reservadas pela UI do Instagram (faixas vermelhas) +
+// contorno da área central segura (tracejado verde).
+function SafezoneOverlay({ spec }: { spec: SafezoneSpec }) {
+  const labelFor = (side: "top" | "bottom" | "left" | "right") =>
+    spec.zones.find((z) => z.side === side)?.label;
+  return (
+    <div className="sz">
+      <div className="sz-band sz-top" style={{ height: `${spec.top}%` }}>
+        {labelFor("top") && <span>{labelFor("top")}</span>}
+      </div>
+      <div className="sz-band sz-bottom" style={{ height: `${spec.bottom}%` }}>
+        {labelFor("bottom") && <span>{labelFor("bottom")}</span>}
+      </div>
+      <div
+        className="sz-band sz-left"
+        style={{ width: `${spec.left}%`, top: `${spec.top}%`, bottom: `${spec.bottom}%` }}
+      />
+      <div
+        className="sz-band sz-right"
+        style={{ width: `${spec.right}%`, top: `${spec.top}%`, bottom: `${spec.bottom}%` }}
+      >
+        {labelFor("right") && <span>{labelFor("right")}</span>}
+      </div>
+      <div
+        className="sz-safe"
+        style={{
+          top: `${spec.top}%`,
+          bottom: `${spec.bottom}%`,
+          left: `${spec.left}%`,
+          right: `${spec.right}%`,
+        }}
+      />
     </div>
   );
 }

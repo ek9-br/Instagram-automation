@@ -133,6 +133,70 @@ body {
   display: flex;
   gap: 10px;
 }
+/* Frame do lightbox (mantém o aspecto do formato para o overlay de safezone alinhar). */
+.lightbox-frame {
+  position: relative;
+  max-width: 94vw;
+  max-height: 78vh;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+}
+.lightbox-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: 78vh;
+  object-fit: contain;
+  border-radius: 0;
+  box-shadow: none;
+}
+/* Overlay de safezone do Instagram. */
+.sz {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.sz-band {
+  position: absolute;
+  background: rgba(239, 68, 68, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sz-top {
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.sz-bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.sz-left {
+  left: 0;
+}
+.sz-right {
+  right: 0;
+}
+.sz-band span {
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 2px 7px;
+  border-radius: 5px;
+}
+.sz-right span {
+  writing-mode: vertical-rl;
+}
+.sz-safe {
+  position: absolute;
+  border: 2px dashed rgba(52, 211, 153, 0.95);
+  border-radius: 4px;
+}
 
 /* Planilha */
 .table-wrap {
