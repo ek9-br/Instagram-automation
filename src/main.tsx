@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import PostsPage from "./pages/PostsPage";
 import PostDetailPage from "./pages/PostDetailPage";
 import LookupsAdminPage from "./pages/LookupsAdminPage";
@@ -17,7 +17,7 @@ const protect = (el: React.ReactNode) => (
   </RequireAuth>
 );
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   { path: "/signin", element: <SignInPage /> },
   { path: "/signup", element: <SignUpPage /> },
   { path: "/", element: protect(<PostsPage />) },
