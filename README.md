@@ -99,6 +99,41 @@ Sem dependências de runtime, nesta fase a validação é por inspeção + JSON 
 > Alternativa sem instalar nada: cole schema e exemplo em um validador JSON
 > Schema online (ex.: jsonschemavalidator.net).
 
+## Operação
+
+O front (GitHub Pages) só **cria** o job no Supabase. Quem processa é o **worker
+local**, que precisa estar rodando na máquina. Sem worker no ar, o job fica em
+`pending` e a tela do post fica eternamente em "O worker está gerando o conteúdo…".
+
+**Fluxo de um post:**
+1. Cria o post no site → vira um job `pending` no Supabase.
+2. O worker puxa o job, roda os 4 agentes e grava a `post-response` (→ `done`).
+3. No site, você revisa/edita o conteúdo e **aprova** (somente o aprovador).
+4. Após aprovado, você **gera as imagens** por prompt (botão na tela → edge
+   function `generate-image`) e finaliza.
+5. **Publicação no Instagram é manual** (baixar as imagens + legenda e postar).
+
+> Imagens são geradas **no front, sob demanda** após a aprovação — por isso o
+> worker roda só o texto (sem custo de OpenAI à toa). A flag `GENERATE_IMAGES` no
+> worker é opcional, para gerar tudo já no pipeline.
+
+### Worker como serviço (macOS / launchd)
+
+O worker está instalado como LaunchAgent (`~/Library/LaunchAgents/com.coalize.instagram-worker.plist`):
+sobe ao logar, fica em loop puxando jobs e reinicia se cair. Logs em `worker/logs/`.
+
+```bash
+# status
+launchctl print gui/$(id -u)/com.coalize.instagram-worker | grep -E 'state|pid'
+# ver logs ao vivo
+tail -f worker/logs/worker.out.log
+# parar / iniciar
+launchctl bootout    gui/$(id -u) ~/Library/LaunchAgents/com.coalize.instagram-worker.plist
+launchctl bootstrap  gui/$(id -u) ~/Library/LaunchAgents/com.coalize.instagram-worker.plist
+```
+
+Para rodar manualmente sem o serviço: `cd worker && npm start` (loop) ou `npm run once`.
+
 ## Roadmap
 
 - **Estrutura documental e contratos** ✅
@@ -110,6 +145,7 @@ Sem dependências de runtime, nesta fase a validação é por inspeção + JSON 
 - **OpenAI Images** ✅ — edge function `generate-image` (`gpt-image-2` → Storage
   público), integrada no worker via flag `GENERATE_IMAGES`. Testada gerando 1
   imagem ponta a ponta (function deployada + `OPENAI_API_KEY` setada).
-- **Front-end (GitHub Pages)** 🟡 — app Vite/React com auth pronto; build OK;
-  deploy no GitHub Pages pendente.
-- **Publicação no Instagram** ⬜ — integração com a API do Instagram (não iniciado).
+- **Front-end (GitHub Pages)** ✅ — publicado em https://ek9-br.github.io/Instagram-automation/
+  (deploy automático via Actions a cada push na `main`); login Supabase verificado.
+- **Worker como serviço** ✅ — LaunchAgent rodando em loop (ver "Operação").
+- **Publicação no Instagram** ⬜ — **manual por decisão** (baixar imagens + legenda e postar).
