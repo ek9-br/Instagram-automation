@@ -43,8 +43,20 @@ function safeName(f) {
     .replace(/-+/g, "-");
 }
 
-const entries = await readdir(dir);
-const files = entries.filter((f) => MIME[path.extname(f).toLowerCase()]);
+// Varre a pasta recursivamente e devolve os caminhos relativos das imagens.
+async function walk(root, rel = "") {
+  const out = [];
+  const entries = await readdir(path.join(root, rel), { withFileTypes: true });
+  for (const e of entries) {
+    if (e.name.startsWith(".")) continue; // ignora .DS_Store etc.
+    const childRel = rel ? `${rel}/${e.name}` : e.name;
+    if (e.isDirectory()) out.push(...(await walk(root, childRel)));
+    else if (MIME[path.extname(e.name).toLowerCase()]) out.push(childRel);
+  }
+  return out;
+}
+
+const files = await walk(dir);
 if (files.length === 0) {
   console.error(`Nenhuma imagem (${Object.keys(MIME).join(", ")}) em ${dir}`);
   process.exit(1);
@@ -52,10 +64,11 @@ if (files.length === 0) {
 
 console.log(`${files.length} imagem(ns) encontrada(s) em ${dir}\n`);
 let ok = 0;
-for (const f of files) {
-  const ct = MIME[path.extname(f).toLowerCase()];
-  const name = safeName(f);
-  const body = await readFile(path.join(dir, f));
+for (const rel of files) {
+  const ct = MIME[path.extname(rel).toLowerCase()];
+  // achata a estrutura: subpasta vira prefixo no nome (categoria preservada).
+  const name = safeName(rel.replaceAll("/", "__"));
+  const body = await readFile(path.join(dir, rel));
   const res = await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${encodeURIComponent(name)}`, {
     method: "POST",
     headers: { apikey: KEY, Authorization: `Bearer ${KEY}`, "Content-Type": ct, "x-upsert": "true" },
@@ -63,9 +76,9 @@ for (const f of files) {
   });
   if (res.ok) {
     ok++;
-    console.log(`  ✓ ${f}${name !== f ? ` → ${name}` : ""}`);
+    console.log(`  ✓ ${rel} → ${name}`);
   } else {
-    console.log(`  ✗ ${f}: HTTP ${res.status} ${(await res.text()).slice(0, 120)}`);
+    console.log(`  ✗ ${rel}: HTTP ${res.status} ${(await res.text()).slice(0, 120)}`);
   }
 }
 console.log(`\nConcluído: ${ok}/${files.length} subida(s) para o bucket "${BUCKET}".`);
