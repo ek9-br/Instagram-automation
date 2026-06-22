@@ -1,11 +1,12 @@
 import { useSyncExternalStore } from "react";
+import { supabase } from "../lib/supabase";
 
-// Banco de imagens (fonte única: Supabase). Hoje mock persistido em
-// localStorage, já no formato que o Supabase Storage + tabela vão usar:
-// addImage() vira upload + insert; useImageBank() vira a leitura da tabela.
-//
-// Toda imagem gerada pela app é adicionada aqui via addImage(), então pode
-// ser selecionada como referência depois — inclusive novas versões.
+// Banco de imagens do app.
+// - "asset": imagens de referência subidas pelo usuário, lidas do bucket
+//   `reference-images` do Supabase Storage (fonte de verdade).
+// - "gerada": saídas da IA adicionadas em runtime via addImage(), persistidas em
+//   localStorage para sobreviver a reloads.
+// Ambas ficam selecionáveis como referência ao gerar imagem.
 
 export type ImageOrigin = "asset" | "gerada";
 
@@ -21,48 +22,69 @@ export const ORIGIN_LABELS: Record<ImageOrigin, string> = {
   gerada: "Geradas",
 };
 
-const STORAGE_KEY = "paa.imagebank.v1";
+export const REFERENCE_BUCKET = "reference-images";
+const STORAGE_KEY = "paa.imagebank.generated.v1";
 
-function seed(): BankImage[] {
-  const assets: [string, string][] = [
-    ["logo-claro", "Logo (claro)"],
-    ["logo-escuro", "Logo (escuro)"],
-    ["textura-1", "Textura abstrata"],
-    ["paleta-marca", "Paleta da marca"],
-    ["produto-frente", "Produto - frente"],
-    ["produto-detalhe", "Produto - detalhe"],
-    ["equipe", "Foto da equipe"],
-    ["evento", "Evento"],
-  ];
-  return assets.map(([id, name]) => ({
-    id,
-    name,
-    url: `https://picsum.photos/seed/${id}/240/240`,
-    origin: "asset" as const,
-  }));
-}
-
-function load(): BankImage[] {
+function loadGenerated(): BankImage[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw) as BankImage[];
   } catch {
     /* ignore */
   }
-  return seed();
+  return [];
 }
 
-let images: BankImage[] = load();
+let assets: BankImage[] = [];
+let generated: BankImage[] = loadGenerated();
+let images: BankImage[] = [...assets, ...generated];
 const listeners = new Set<() => void>();
+let assetsLoaded = false;
+
+function recompute() {
+  images = [...assets, ...generated];
+}
 
 function emit() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(images));
+  recompute();
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(generated));
+  } catch {
+    /* ignore */
+  }
   listeners.forEach((l) => l());
+}
+
+function niceName(filename: string): string {
+  return filename.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").trim() || filename;
+}
+
+// Lê os assets do bucket de referências (uma vez, ao primeiro uso).
+async function loadAssets() {
+  const { data, error } = await supabase.storage
+    .from(REFERENCE_BUCKET)
+    .list("", { limit: 1000, sortBy: { column: "name", order: "asc" } });
+  if (error || !data) return;
+  assets = data
+    .filter((o) => o.id !== null) // ignora "pastas" (entradas sem id)
+    .map((o) => ({
+      id: `asset:${o.name}`,
+      name: niceName(o.name),
+      url: supabase.storage.from(REFERENCE_BUCKET).getPublicUrl(o.name).data.publicUrl,
+      origin: "asset" as const,
+    }));
+  emit();
 }
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
-  return () => listeners.delete(listener);
+  if (!assetsLoaded) {
+    assetsLoaded = true;
+    void loadAssets();
+  }
+  return () => {
+    listeners.delete(listener);
+  };
 }
 
 export function useImageBank(): BankImage[] {
@@ -77,7 +99,7 @@ export function imagesByIds(ids: string[]): BankImage[] {
   return images.filter((b) => ids.includes(b.id));
 }
 
-// Adiciona uma imagem ao banco e devolve o registro criado.
+// Adiciona uma imagem ao banco em runtime e devolve o registro criado.
 export function addImage(url: string, name: string, origin: ImageOrigin = "gerada"): BankImage {
   const item: BankImage = {
     id: `bank_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
@@ -85,7 +107,8 @@ export function addImage(url: string, name: string, origin: ImageOrigin = "gerad
     url,
     origin,
   };
-  images = [item, ...images];
+  if (origin === "asset") assets = [item, ...assets];
+  else generated = [item, ...generated];
   emit();
   return item;
 }

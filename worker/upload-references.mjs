@@ -1,0 +1,72 @@
+// Sobe imagens de uma pasta local para o bucket `reference-images` (via service role).
+// Elas passam a aparecer como "Assets" no seletor de referências do app.
+//
+// Uso:
+//   node upload-references.mjs <pasta>
+// Ex.:
+//   node upload-references.mjs ~/Desktop/referencias
+
+import { readdir, readFile } from "node:fs/promises";
+import path from "node:path";
+import { loadEnv } from "./engine.mjs";
+
+await loadEnv();
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const BUCKET = "reference-images";
+
+const MIME = {
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".gif": "image/gif",
+  ".avif": "image/avif",
+};
+
+const dir = process.argv[2];
+if (!dir) {
+  console.error("Uso: node upload-references.mjs <pasta>");
+  process.exit(1);
+}
+if (!SUPABASE_URL || !KEY) {
+  console.error("Faltam SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY no worker/.env");
+  process.exit(1);
+}
+
+// nome de objeto seguro: sem acentos, espaços viram hífen.
+function safeName(f) {
+  return f
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-zA-Z0-9._-]+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+const entries = await readdir(dir);
+const files = entries.filter((f) => MIME[path.extname(f).toLowerCase()]);
+if (files.length === 0) {
+  console.error(`Nenhuma imagem (${Object.keys(MIME).join(", ")}) em ${dir}`);
+  process.exit(1);
+}
+
+console.log(`${files.length} imagem(ns) encontrada(s) em ${dir}\n`);
+let ok = 0;
+for (const f of files) {
+  const ct = MIME[path.extname(f).toLowerCase()];
+  const name = safeName(f);
+  const body = await readFile(path.join(dir, f));
+  const res = await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${encodeURIComponent(name)}`, {
+    method: "POST",
+    headers: { apikey: KEY, Authorization: `Bearer ${KEY}`, "Content-Type": ct, "x-upsert": "true" },
+    body,
+  });
+  if (res.ok) {
+    ok++;
+    console.log(`  ✓ ${f}${name !== f ? ` → ${name}` : ""}`);
+  } else {
+    console.log(`  ✗ ${f}: HTTP ${res.status} ${(await res.text()).slice(0, 120)}`);
+  }
+}
+console.log(`\nConcluído: ${ok}/${files.length} subida(s) para o bucket "${BUCKET}".`);
+console.log("Recarregue o app — elas aparecem em Referências → Assets.");
