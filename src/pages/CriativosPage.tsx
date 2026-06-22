@@ -13,11 +13,16 @@ import { addImage, imagesByIds } from "../data/imageBank";
 import ReferenceImages from "../components/ReferenceImages";
 import { useAuth } from "../auth/AuthContext";
 
+// Prompt usado ao regerar: troca o fundo preto da safezone por uma extensão
+// natural do próprio cenário, sem mover o conteúdo central.
+const BG_REPLACE_PROMPT =
+  "Substitua o fundo preto desta imagem por uma extensão natural e contínua do próprio cenário/fundo da imagem, preenchendo todas as bordas pretas até as extremidades. Mantenha o conteúdo central (produto, pessoas, textos) exatamente na mesma posição e tamanho, sem mover, cortar ou cobrir. Resultado fotográfico, coeso e natural, pronto para anúncio.";
+
 const STATUS_LABEL: Record<CreativeStatus, string> = {
   idle: "—",
   generating: "Gerando imagem…",
-  safezone: "Aplicando safezone…",
-  done: "Pronto",
+  safezoning: "Aplicando safezone…",
+  regenerating: "Regerando com safezone…",
   error: "Erro",
 };
 
@@ -29,6 +34,7 @@ function emptyCreative(): Creative {
     referenceImageIds: [],
     status: "idle",
     rawUrl: null,
+    safezoneUrl: null,
     finalUrl: null,
     error: null,
   };
@@ -49,36 +55,88 @@ export default function CriativosPage() {
     upsertCreative({ ...c, ...changes });
   }
 
-  // Gera a imagem (OpenAI) e, em seguida, aplica a safezone do formato escolhido.
+  const busy = (c: Creative) =>
+    c.status === "generating" || c.status === "safezoning" || c.status === "regenerating";
+
+  // 1) Gera a imagem crua a partir do prompt (+ referências). Reseta as etapas seguintes.
   async function gerar(c: Creative) {
-    const fmt = creativeFormatOf(c);
     if (!c.prompt.trim()) {
       alert("Cole um prompt antes de gerar.");
       return;
     }
-    if (!fmt) return;
-    let cur: Creative = { ...c, status: "generating", error: null };
+    const cur: Creative = {
+      ...c,
+      status: "generating",
+      error: null,
+      rawUrl: null,
+      safezoneUrl: null,
+      finalUrl: null,
+    };
     upsertCreative(cur);
     try {
-      // imagens de referência selecionadas → URLs enviadas no payload da OpenAI
       const references = imagesByIds(c.referenceImageIds ?? []).map((b) => b.url);
       const { url: raw } = await generateImageFromPrompt(c.prompt, "portrait", references);
-      cur = { ...cur, status: "safezone", rawUrl: raw };
-      upsertCreative(cur);
-      const { url: final } = await applySafeGuard(raw, fmt.safeguard);
-      cur = { ...cur, status: "done", finalUrl: final };
-      upsertCreative(cur);
-      addImage(final, `Criativo ${fmt.label}`, "gerada");
+      upsertCreative({ ...cur, status: "idle", rawUrl: raw });
     } catch (e) {
-      upsertCreative({
-        ...cur,
-        status: "error",
-        error: e instanceof Error ? e.message : String(e),
-      });
+      upsertCreative({ ...cur, status: "error", error: msg(e) });
     }
   }
 
-  const busy = (c: Creative) => c.status === "generating" || c.status === "safezone";
+  // 2) Aplica a safezone preta sobre a imagem crua (miolo + fundo preto no tamanho final).
+  async function aplicarSafezone(c: Creative) {
+    const fmt = creativeFormatOf(c);
+    if (!c.rawUrl || !fmt) return;
+    const cur: Creative = { ...c, status: "safezoning", error: null };
+    upsertCreative(cur);
+    try {
+      const { url: sz } = await applySafeGuard(c.rawUrl, fmt.safeguard);
+      upsertCreative({ ...cur, status: "idle", safezoneUrl: sz, finalUrl: null });
+    } catch (e) {
+      upsertCreative({ ...cur, status: "error", error: msg(e) });
+    }
+  }
+
+  // 3) Regera na OpenAI usando a safezone como referência, trocando o preto por
+  //    uma continuação natural do cenário.
+  async function regerarComSafezone(c: Creative) {
+    const fmt = creativeFormatOf(c);
+    if (!c.safezoneUrl) return;
+    const cur: Creative = { ...c, status: "regenerating", error: null };
+    upsertCreative(cur);
+    try {
+      const { url: fin } = await generateImageFromPrompt(BG_REPLACE_PROMPT, "portrait", [
+        c.safezoneUrl,
+      ]);
+      upsertCreative({ ...cur, status: "idle", finalUrl: fin });
+      addImage(fin, `Criativo ${fmt?.label ?? ""}`.trim(), "gerada");
+    } catch (e) {
+      upsertCreative({ ...cur, status: "error", error: msg(e) });
+    }
+  }
+
+  function stageLabel(c: Creative): string {
+    if (busy(c)) return STATUS_LABEL[c.status];
+    if (c.status === "error") return "Erro";
+    if (c.finalUrl) return "Final pronto";
+    if (c.safezoneUrl) return "Safezone aplicada";
+    if (c.rawUrl) return "Gerada";
+    return "—";
+  }
+
+  function Thumb({ url, caption }: { url: string; caption: string }) {
+    return (
+      <figure className="cre-fig">
+        <img
+          className="prompt-thumb"
+          src={url}
+          alt={caption}
+          title="Clique para ampliar"
+          onClick={() => setLightbox(url)}
+        />
+        <figcaption>{caption}</figcaption>
+      </figure>
+    );
+  }
 
   return (
     <div className="page">
@@ -97,21 +155,21 @@ export default function CriativosPage() {
       </header>
 
       <p className="muted small" style={{ margin: "0 0 12px" }}>
-        Cada linha: escolha o formato, cole o prompt e clique em <strong>Gerar</strong>. A
-        imagem é criada e a <strong>safezone</strong> é aplicada automaticamente — o
-        resultado fica na própria linha.
+        Fluxo por linha: <strong>Gerar</strong> → valide a imagem → <strong>Aplicar
+        safezone</strong> (fundo preto) → <strong>Regerar com safezone</strong> (a OpenAI
+        troca o preto por uma continuação natural do cenário). Tudo fica na própria linha.
       </p>
 
       <div className="table-wrap">
         <table className="sheet">
           <thead>
             <tr>
-              <th style={{ width: 170 }}>Formato</th>
+              <th style={{ width: 150 }}>Formato</th>
               <th>Prompt</th>
-              <th style={{ width: 220 }}>Referências</th>
-              <th style={{ width: 150 }}>Status</th>
-              <th style={{ width: 130 }}>Resultado</th>
-              <th style={{ width: 150 }}></th>
+              <th style={{ width: 200 }}>Referências</th>
+              <th style={{ width: 130 }}>Status</th>
+              <th style={{ width: 230 }}>Resultado</th>
+              <th style={{ width: 180 }}></th>
             </tr>
           </thead>
           <tbody>
@@ -158,46 +216,73 @@ export default function CriativosPage() {
                       <span className="spinner" /> {STATUS_LABEL[c.status]}
                     </span>
                   ) : c.status === "error" ? (
-                    <span className="status status-job-error" title={c.error ?? ""}>
-                      Erro
-                    </span>
+                    <>
+                      <span className="status status-job-error">Erro</span>
+                      {c.error && (
+                        <p className="error-banner" style={{ marginTop: 6 }}>
+                          {c.error}
+                        </p>
+                      )}
+                    </>
                   ) : (
-                    <span className="muted small">{STATUS_LABEL[c.status]}</span>
-                  )}
-                  {c.status === "error" && c.error && (
-                    <p className="error-banner" style={{ marginTop: 6 }}>
-                      {c.error}
-                    </p>
+                    <span className="muted small">{stageLabel(c)}</span>
                   )}
                 </td>
                 <td>
-                  {c.finalUrl ? (
-                    <img
-                      className="prompt-thumb"
-                      src={c.finalUrl}
-                      alt="Criativo"
-                      title="Clique para ampliar"
-                      onClick={() => setLightbox(c.finalUrl)}
-                    />
-                  ) : (
-                    <span className="muted small">—</span>
-                  )}
+                  <div className="cre-results">
+                    {c.rawUrl && <Thumb url={c.rawUrl} caption="Gerada" />}
+                    {c.safezoneUrl && <Thumb url={c.safezoneUrl} caption="Safezone" />}
+                    {c.finalUrl && <Thumb url={c.finalUrl} caption="Final" />}
+                    {!c.rawUrl && <span className="muted small">—</span>}
+                  </div>
                 </td>
-                <td className="actions">
-                  <button
-                    className="btn primary"
-                    disabled={busy(c) || !c.prompt.trim()}
-                    onClick={() => void gerar(c)}
-                  >
-                    {busy(c) ? "Gerando…" : c.finalUrl ? "Gerar de novo" : "Gerar"}
-                  </button>
-                  <button
-                    className="btn ghost"
-                    disabled={busy(c)}
-                    onClick={() => deleteCreative(c.id)}
-                  >
-                    ✕
-                  </button>
+                <td>
+                  <div className="cre-actions">
+                    <button
+                      className="btn primary small"
+                      disabled={busy(c) || !c.prompt.trim()}
+                      onClick={() => void gerar(c)}
+                    >
+                      {c.status === "generating"
+                        ? "Gerando…"
+                        : c.rawUrl
+                          ? "Gerar de novo"
+                          : "Gerar"}
+                    </button>
+                    {c.rawUrl && (
+                      <button
+                        className="btn small"
+                        disabled={busy(c)}
+                        onClick={() => void aplicarSafezone(c)}
+                      >
+                        {c.status === "safezoning"
+                          ? "Aplicando…"
+                          : c.safezoneUrl
+                            ? "Aplicar safezone de novo"
+                            : "Aplicar safezone"}
+                      </button>
+                    )}
+                    {c.safezoneUrl && (
+                      <button
+                        className="btn small"
+                        disabled={busy(c)}
+                        onClick={() => void regerarComSafezone(c)}
+                      >
+                        {c.status === "regenerating"
+                          ? "Regerando…"
+                          : c.finalUrl
+                            ? "Regerar com safezone"
+                            : "Regerar com safezone"}
+                      </button>
+                    )}
+                    <button
+                      className="btn ghost small"
+                      disabled={busy(c)}
+                      onClick={() => deleteCreative(c.id)}
+                    >
+                      ✕ Remover
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -222,4 +307,8 @@ export default function CriativosPage() {
       )}
     </div>
   );
+}
+
+function msg(e: unknown): string {
+  return e instanceof Error ? e.message : String(e);
 }

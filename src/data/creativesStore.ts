@@ -7,16 +7,22 @@ import type { Creative } from "../types";
 
 const STORAGE_KEY = "paa.creatives.v1";
 
+const VALID = new Set(["idle", "generating", "safezoning", "regenerating", "error"]);
+
 function load(): Creative[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     const list = raw ? (JSON.parse(raw) as Creative[]) : [];
-    // status transitório não sobrevive a reload: normaliza ao carregar.
-    return list.map((c) =>
-      c.status === "generating" || c.status === "safezone"
-        ? { ...c, status: c.finalUrl ? "done" : "idle" }
-        : c
-    );
+    // Normaliza ao carregar: garante os campos novos e zera status transitório
+    // (nenhuma operação está em andamento após um reload).
+    return list.map((c) => ({
+      ...c,
+      safezoneUrl: c.safezoneUrl ?? null,
+      finalUrl: c.finalUrl ?? null,
+      status: VALID.has(c.status) && c.status !== "generating" && c.status !== "safezoning" && c.status !== "regenerating"
+        ? c.status
+        : "idle",
+    }));
   } catch {
     return [];
   }

@@ -72,7 +72,12 @@ export function formatOf(unit: ImageUnit): MetaFormat | undefined {
 
 // ---- Criativos (página dedicada: prompt → gera imagem → aplica safezone) ----
 
-export type CreativeStatus = "idle" | "generating" | "safezone" | "done" | "error";
+export type CreativeStatus =
+  | "idle"
+  | "generating" // gerando a imagem crua
+  | "safezoning" // aplicando a safezone preta
+  | "regenerating" // regerando na OpenAI para trocar o fundo preto
+  | "error";
 
 export interface CreativeFormat {
   id: string; // valor salvo no Creative
@@ -94,8 +99,9 @@ export interface Creative {
   prompt: string;
   referenceImageIds: string[]; // imagens do banco enviadas no payload da OpenAI
   status: CreativeStatus;
-  rawUrl: string | null; // imagem gerada (antes da safezone)
-  finalUrl: string | null; // imagem com a safezone aplicada (resultado final)
+  rawUrl: string | null; // 1) imagem gerada (crua)
+  safezoneUrl: string | null; // 2) safezone preta aplicada
+  finalUrl: string | null; // 3) regerada: fundo preto trocado por continuação natural
   error: string | null;
 }
 

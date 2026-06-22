@@ -182,6 +182,29 @@ table.sheet {
   resize: vertical;
   font-family: inherit;
 }
+/* Criativos: resultados (gerada/safezone/final) e ações empilhadas. */
+.cre-results {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.cre-fig {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.cre-fig figcaption {
+  font-size: 11px;
+  color: var(--muted);
+}
+.cre-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
+}
 .sheet .slides-input {
   min-width: 56px;
   width: 64px;
