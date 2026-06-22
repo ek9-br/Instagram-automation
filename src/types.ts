@@ -121,34 +121,44 @@ export interface SafezoneSpec {
   zones: { side: "top" | "bottom" | "left" | "right"; label: string }[];
 }
 
+// Fontes: outfy.com/blog/instagram-safe-zone (px específicos do Reels/Stories) e
+// zeely.ai/blog/master-instagram-safe-zones (regra do "80% central"). Os px foram
+// convertidos para % sobre o canvas 1080×1920. As fontes variam um pouco; usei o
+// perfil de Reels (mais restritivo, com coluna de botões à direita) para o 9:16.
 export const INSTAGRAM_SAFEZONES: Record<string, SafezoneSpec> = {
-  // Reels/Stories: topo (perfil/ícones), base (legenda, áudio, CTA, barra de
-  // resposta) e coluna direita (curtir/comentar/enviar/salvar).
+  // Reels (1080×1920): topo 108px (~6%), base 320px (~17%), esquerda 60px (~6%),
+  // direita 120px (~11%, coluna de curtir/comentar/enviar/salvar).
+  // Stories é parecido (sem a coluna direita; barra de resposta na base).
   "9_16": {
-    top: 13,
-    bottom: 21,
-    left: 4,
-    right: 17,
+    top: 6,
+    bottom: 17,
+    left: 6,
+    right: 11,
     zones: [
       { side: "top", label: "Perfil / ícones" },
       { side: "right", label: "Botões" },
-      { side: "bottom", label: "Legenda · áudio · CTA" },
+      { side: "bottom", label: "Legenda · botões · CTA" },
     ],
   },
-  // Feed 4:5 — margem de segurança nas bordas (e a base, onde fica a legenda).
+  // Feed 4:5 (1080×1350): o feed não sobrepõe UI nem corta — canvas cheio é seguro.
+  // Mantemos só uma margem leve de "título seguro" (regra do 80% central).
   "4_5": {
-    top: 5,
-    bottom: 9,
-    left: 5,
-    right: 5,
-    zones: [{ side: "bottom", label: "Borda / legenda" }],
+    top: 4,
+    bottom: 4,
+    left: 4,
+    right: 4,
+    zones: [{ side: "bottom", label: "Margem segura (feed não corta)" }],
   },
-  // Feed 3:4 — idem, com um pouco mais de respiro vertical.
+  // Feed 3:4 (1080×1440): mais alto que a grade do perfil (4:5) → topo/base podem
+  // ser cortados na pré-visualização da grade.
   "3_4": {
     top: 5,
-    bottom: 9,
-    left: 5,
-    right: 5,
-    zones: [{ side: "bottom", label: "Borda / legenda" }],
+    bottom: 5,
+    left: 4,
+    right: 4,
+    zones: [
+      { side: "top", label: "Corte na grade 4:5" },
+      { side: "bottom", label: "Corte na grade 4:5" },
+    ],
   },
 };
