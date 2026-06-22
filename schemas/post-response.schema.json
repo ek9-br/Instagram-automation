@@ -1,0 +1,144 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://post-automation-agent/schemas/post-response.schema.json",
+  "title": "PostResponse",
+  "description": "Saída final de um job, produzida pelo pipeline de agentes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "job_id",
+    "brand",
+    "format",
+    "theme",
+    "angle",
+    "promise",
+    "target_audience",
+    "selected_template",
+    "caption",
+    "cta",
+    "slides",
+    "image_prompts",
+    "safe_area",
+    "review",
+    "status"
+  ],
+  "properties": {
+    "job_id": { "type": "string", "minLength": 1 },
+    "brand": { "type": "string", "minLength": 1 },
+    "briefing": { "type": "string", "description": "Eco do briefing do request (opcional)." },
+    "objective": { "type": "string", "description": "Eco do objetivo do request (opcional)." },
+    "audience": { "type": "string", "description": "Eco do público do request (opcional)." },
+    "format": {
+      "type": "string",
+      "enum": [
+        "post_feed_3x4",
+        "carousel_3x4",
+        "stories_9x16",
+        "reels_cover_9x16",
+        "ads_landscape_1_91_1"
+      ]
+    },
+    "theme": { "type": "string", "minLength": 1 },
+    "angle": { "type": "string", "minLength": 1 },
+    "promise": { "type": "string", "minLength": 1 },
+    "target_audience": { "type": "string", "minLength": 1 },
+    "selected_template": {
+      "type": "string",
+      "description": "id de um template em templates.md.",
+      "enum": [
+        "lista",
+        "passo_a_passo",
+        "pas",
+        "aida",
+        "quebra_de_objecao",
+        "antes_e_depois",
+        "mitos_e_verdades",
+        "estudo_de_caso",
+        "erros_comuns",
+        "checklist"
+      ]
+    },
+    "caption": { "type": "string", "minLength": 1 },
+    "cta": { "type": "string", "minLength": 1 },
+    "slides": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["index", "role", "title", "body"],
+        "properties": {
+          "index": { "type": "integer", "minimum": 1 },
+          "role": { "type": "string", "enum": ["cover", "content", "cta"] },
+          "title": { "type": "string", "minLength": 1 },
+          "body": { "type": "string" }
+        }
+      }
+    },
+    "image_prompts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["target", "prompt", "aspect"],
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Peça alvo: 'slide:N', 'cover', 'single' ou 'format:<id>' (criativo).",
+            "pattern": "^(slide:[0-9]+|cover|single|format:[a-z0-9_]+)$"
+          },
+          "label": {
+            "type": "string",
+            "description": "Rótulo da peça (ex.: 'Feed 1:1', 'Stories / Reels 9:16')."
+          },
+          "prompt": { "type": "string", "minLength": 1 },
+          "aspect": {
+            "type": "string",
+            "enum": ["square", "portrait", "landscape"]
+          },
+          "negative": { "type": "string" },
+          "references": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "safe_area": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["top_pct", "bottom_pct", "side_pct"],
+      "properties": {
+        "top_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+        "bottom_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+        "side_pct": { "type": "number", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "checks", "issues", "suggestions"],
+      "properties": {
+        "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "checks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["quality", "consistency", "brand", "template"],
+          "properties": {
+            "quality": { "type": "boolean" },
+            "consistency": { "type": "boolean" },
+            "brand": { "type": "boolean" },
+            "template": { "type": "boolean" }
+          }
+        },
+        "issues": { "type": "array", "items": { "type": "string" } },
+        "suggestions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["approved", "needs_review", "rejected"]
+    }
+  }
+}

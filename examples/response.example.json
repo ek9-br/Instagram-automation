@@ -1,0 +1,113 @@
+{
+  "job_id": "9f1c2e7a-4b6d-4f8a-9c10-2b3d4e5f6a7b",
+  "brand": "Acme",
+  "format": "carousel_3x4",
+  "theme": "Erros que sabotam o Instagram de pequenos negócios",
+  "angle": "Cada erro comum vem com a correção prática na sequência, sem culpa e sem jargão.",
+  "promise": "Você vai sair sabendo exatamente o que parar de fazer para o seu Instagram começar a trazer clientes.",
+  "target_audience": "Microempreendedoras que cuidam do próprio marketing sem tempo nem equipe.",
+  "selected_template": "erros_comuns",
+  "caption": "Seu Instagram trabalha pra você ou você trabalha pra ele? 🤔\n\nReuni os 4 erros que mais sabotam o resultado de pequenos negócios — e a correção de cada um, na prática.\n\nComeça hoje: corrige um por semana e sente a diferença.\n\nSalve este post para não esquecer. 👇",
+  "cta": "Salve este post e comece a corrigir hoje",
+  "slides": [
+    {
+      "index": 1,
+      "role": "cover",
+      "title": "4 erros que sabotam seu Instagram",
+      "body": "E como corrigir cada um sem complicação."
+    },
+    {
+      "index": 2,
+      "role": "content",
+      "title": "Erro 1: postar sem objetivo",
+      "body": "Correção: defina antes se o post é para atrair, engajar ou vender."
+    },
+    {
+      "index": 3,
+      "role": "content",
+      "title": "Erro 2: falar de você, não da dor do cliente",
+      "body": "Correção: comece pelo problema da Marina, não pelo seu produto."
+    },
+    {
+      "index": 4,
+      "role": "content",
+      "title": "Erro 3: nenhum convite para agir",
+      "body": "Correção: feche todo post com um CTA único e claro."
+    },
+    {
+      "index": 5,
+      "role": "content",
+      "title": "Erro 4: desistir em 2 semanas",
+      "body": "Correção: constância vale mais que perfeição. Mantenha o passo a passo."
+    },
+    {
+      "index": 6,
+      "role": "cta",
+      "title": "Comece hoje",
+      "body": "Corrija um erro por semana. Salve este post para acompanhar."
+    }
+  ],
+  "image_prompts": [
+    {
+      "target": "slide:1",
+      "prompt": "Fotografia real e iluminada de uma microempreendedora sorrindo ao olhar o celular em sua pequena loja, paleta azul-profundo e off-white da marca Acme, composição limpa com amplo espaço negativo no terço superior para o título.",
+      "aspect": "portrait",
+      "negative": "sem texto embutido, sem marcas d'água, sem executivos de gravata, sem gradientes berrantes",
+      "references": []
+    },
+    {
+      "target": "slide:2",
+      "prompt": "Ilustração plana de um alvo/bússola sobre fundo off-white, detalhe em verde-menta indicando direção, espaço livre central para texto, estilo da marca Acme.",
+      "aspect": "portrait",
+      "negative": "sem texto embutido, sem ruído visual",
+      "references": []
+    },
+    {
+      "target": "slide:3",
+      "prompt": "Ilustração plana de duas pessoas conversando com balão de fala destacando a dor do cliente, paleta da marca, área inferior reservada para texto.",
+      "aspect": "portrait",
+      "negative": "sem texto embutido",
+      "references": []
+    },
+    {
+      "target": "slide:4",
+      "prompt": "Ilustração plana de um botão/pílula de CTA em verde-menta sobre fundo azul-profundo, ponto focal claro, espaço para título acima.",
+      "aspect": "portrait",
+      "negative": "sem texto embutido",
+      "references": []
+    },
+    {
+      "target": "slide:5",
+      "prompt": "Fotografia de calendário/rotina simples sobre mesa de trabalho de pequeno negócio, luz natural, paleta da marca, espaço negativo para texto no topo.",
+      "aspect": "portrait",
+      "negative": "sem texto embutido, sem datas legíveis",
+      "references": []
+    },
+    {
+      "target": "slide:6",
+      "prompt": "Fechamento visual com logo off-white da Acme em fundo azul-profundo, área central limpa para o CTA, sensação de recomeço e otimismo.",
+      "aspect": "portrait",
+      "negative": "sem texto embutido além do espaço reservado, sem poluição",
+      "references": []
+    }
+  ],
+  "safe_area": {
+    "top_pct": 8,
+    "bottom_pct": 8,
+    "side_pct": 8
+  },
+  "review": {
+    "score": 88,
+    "checks": {
+      "quality": true,
+      "consistency": true,
+      "brand": true,
+      "template": true
+    },
+    "issues": [],
+    "suggestions": [
+      "Considerar um slide de prova social (mini estudo de caso) antes do CTA em uma próxima versão."
+    ]
+  },
+  "status": "approved"
+}
