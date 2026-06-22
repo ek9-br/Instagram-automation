@@ -9,7 +9,8 @@ import {
   useCreatives,
 } from "../data/creativesStore";
 import { applySafeGuard, generateImageFromPrompt } from "../data/jobs";
-import { addImage } from "../data/imageBank";
+import { addImage, imagesByIds } from "../data/imageBank";
+import ReferenceImages from "../components/ReferenceImages";
 import { useAuth } from "../auth/AuthContext";
 
 const STATUS_LABEL: Record<CreativeStatus, string> = {
@@ -25,6 +26,7 @@ function emptyCreative(): Creative {
     id: newCreativeId(),
     formatId: "9_16",
     prompt: "",
+    referenceImageIds: [],
     status: "idle",
     rawUrl: null,
     finalUrl: null,
@@ -58,7 +60,9 @@ export default function CriativosPage() {
     let cur: Creative = { ...c, status: "generating", error: null };
     upsertCreative(cur);
     try {
-      const { url: raw } = await generateImageFromPrompt(c.prompt, "portrait");
+      // imagens de referência selecionadas → URLs enviadas no payload da OpenAI
+      const references = imagesByIds(c.referenceImageIds ?? []).map((b) => b.url);
+      const { url: raw } = await generateImageFromPrompt(c.prompt, "portrait", references);
       cur = { ...cur, status: "safezone", rawUrl: raw };
       upsertCreative(cur);
       const { url: final } = await applySafeGuard(raw, fmt.safeguard);
@@ -104,6 +108,7 @@ export default function CriativosPage() {
             <tr>
               <th style={{ width: 170 }}>Formato</th>
               <th>Prompt</th>
+              <th style={{ width: 220 }}>Referências</th>
               <th style={{ width: 150 }}>Status</th>
               <th style={{ width: 130 }}>Resultado</th>
               <th style={{ width: 150 }}></th>
@@ -112,7 +117,7 @@ export default function CriativosPage() {
           <tbody>
             {creatives.length === 0 && (
               <tr>
-                <td colSpan={5} className="empty">
+                <td colSpan={6} className="empty">
                   Nenhum criativo ainda. Clique em "+ Nova linha".
                 </td>
               </tr>
@@ -139,6 +144,12 @@ export default function CriativosPage() {
                     placeholder="Cole o prompt da imagem…"
                     disabled={busy(c)}
                     onChange={(e) => patch(c, { prompt: e.target.value })}
+                  />
+                </td>
+                <td>
+                  <ReferenceImages
+                    selectedIds={c.referenceImageIds ?? []}
+                    onChange={(ids) => patch(c, { referenceImageIds: ids })}
                   />
                 </td>
                 <td>
