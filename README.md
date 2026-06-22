@@ -99,16 +99,17 @@ Sem dependências de runtime, nesta fase a validação é por inspeção + JSON 
 > Alternativa sem instalar nada: cole schema e exemplo em um validador JSON
 > Schema online (ex.: jsonschemavalidator.net).
 
-## Roadmap das próximas fases
+## Roadmap
 
-- **F-atual — Estrutura documental e contratos** ✅ (este conteúdo).
-- **F+1 — Worker local**: processo que recebe jobs do Supabase, valida contra os
-  schemas e executa os 4 agentes em ordem, produzindo a response.
-- **F+2 — Integração OpenAI Images**: gerar imagens a partir dos `image_prompts`.
-- **F+3 — Supabase Storage**: subir imagens geradas e anexar URLs à response.
-- **F+4 — Supabase DB + Edge Function**: fila de jobs, status e disparo do worker.
-- **F+5 — Front-end (GitHub Pages) + editor visual**: criar jobs e revisar/aprovar.
-- **F+6 — Publicação**: integração com a API do Instagram.
-
-Critério de prontidão desta fase: todos os arquivos acima criados e preenchidos,
-schemas e exemplos consistentes, e a estrutura pronta para o worker local da F+1.
+- **Estrutura documental e contratos** ✅
+- **Worker local** ✅ — polling da fila do Supabase, valida contra os schemas e
+  executa os 4 agentes em ordem (pipeline real via `claude` headless, verificado).
+- **Supabase DB + Edge Functions** ✅ — migrations da fila de jobs, `create-job`,
+  `generate-image`, `apply-safeguard` (deploy das functions a confirmar).
+- **Supabase Storage** ✅ — bucket `generated-images`.
+- **OpenAI Images** 🟡 — edge function `generate-image` pronta; integração no
+  worker via flag `GENERATE_IMAGES` (requer function deployada + `OPENAI_API_KEY`
+  como secret no Supabase).
+- **Front-end (GitHub Pages)** 🟡 — app Vite/React com auth pronto; build OK;
+  deploy no GitHub Pages pendente.
+- **Publicação no Instagram** ⬜ — integração com a API do Instagram (não iniciado).

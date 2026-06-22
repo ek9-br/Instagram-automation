@@ -1,9 +1,10 @@
-# ARCHITECTURE.md — Arquitetura futura
+# ARCHITECTURE.md — Arquitetura
 
-Este documento descreve a arquitetura-alvo do post-automation-agent. **Nesta
-fase só existem documentos, agentes locais e contratos** — nenhuma integração
-está implementada. O agente **roda localmente no PC do usuário** e será
-**invocado por uma edge function do Supabase** (não é hospedado no GitHub Pages).
+Este documento descreve a arquitetura do projeto de automação de posts do
+Instagram. A maior parte do fluxo **já está implementada** (front, fila no
+Supabase, worker local com o pipeline real de agentes, edge function de imagem).
+O agente **roda localmente no PC do usuário** e processa jobs gravados no
+Supabase pelo front (não é hospedado no GitHub Pages).
 
 ## 1. Visão de alto nível
 
@@ -33,15 +34,15 @@ está implementada. O agente **roda localmente no PC do usuário** e será
 
 ## 2. Papel de cada camada
 
-| Camada              | Responsabilidade                                                                 | Status nesta fase |
+| Camada              | Responsabilidade                                                                 | Status            |
 |---------------------|----------------------------------------------------------------------------------|-------------------|
-| GitHub Pages        | UI de criação de jobs e editor visual; não executa IA.                           | Não implementado  |
-| Supabase (DB)       | Persistir jobs, marcas, personas, lookups; fila/estado do job.                   | Não implementado  |
-| Supabase Edge Func. | Ponte segura que aciona o worker local e entrega o job.                          | Não implementado  |
-| **Worker Local**    | Orquestra o pipeline, valida contratos, chama OpenAI, sobe ao Storage.           | **Próxima fase**  |
-| Claude Code Agents  | Inteligência do sistema (estratégia, escrita, prompts, review).                  | **Esta fase (docs)** |
-| OpenAI Images       | Geração das imagens a partir dos prompts.                                         | Não implementado  |
-| Supabase Storage    | Guardar as imagens geradas e servir URLs.                                        | Não implementado  |
+| GitHub Pages        | UI de criação de jobs e editor visual; não executa IA.                           | Front pronto (deploy pendente) |
+| Supabase (DB)       | Persistir jobs, lookups; fila/estado do job.                                     | Implementado (migrations) |
+| Supabase Edge Func. | `create-job`, `generate-image`, `apply-safeguard`.                               | Implementado (deploy a confirmar) |
+| **Worker Local**    | Polling da fila, valida contratos, executa o pipeline de agentes.                | **Implementado** |
+| Claude Code Agents  | Inteligência do sistema (estratégia, escrita, prompts, review).                  | **Implementado** |
+| OpenAI Images       | Geração das imagens a partir dos prompts (edge function `generate-image`).        | Função pronta; integração no worker via `GENERATE_IMAGES` |
+| Supabase Storage    | Guardar as imagens geradas e servir URLs (bucket `generated-images`).            | Implementado      |
 
 ## 3. Por que o agente fica local
 

@@ -11,6 +11,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import Ajv from "ajv";
 import { runPipeline, runMockPipeline } from "./pipeline.mjs";
+import { attachImages, DEFAULT_FN } from "./images.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(__dirname, "..");
@@ -35,6 +36,8 @@ await loadEnv();
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const POLL_INTERVAL_MS = Number(process.env.POLL_INTERVAL_MS ?? 5000);
+const GENERATE_IMAGES = String(process.env.GENERATE_IMAGES).toLowerCase() === "true";
+const IMAGE_FN_URL = process.env.IMAGE_FN_URL || (SUPABASE_URL ? DEFAULT_FN(SUPABASE_URL) : "");
 
 if (!SUPABASE_URL || !KEY) {
   console.error("Faltam SUPABASE_URL e/ou SUPABASE_SERVICE_ROLE_KEY (ver worker/.env.example).");
@@ -99,6 +102,14 @@ async function processJob(job) {
     const response = MOCK
       ? runMockPipeline(job.request, job.inputs?.tipo)
       : await runPipeline(job.request, (m) => console.log(m));
+    if (GENERATE_IMAGES) {
+      const n = await attachImages(response, {
+        fnUrl: IMAGE_FN_URL,
+        key: KEY,
+        log: (m) => console.log(m),
+      });
+      console.log(`[job ${job.id}] imagens geradas: ${n}/${response.image_prompts?.length ?? 0}`);
+    }
     if (!validateResponse(response)) {
       const errs = ajv.errorsText(validateResponse.errors, { separator: "; " });
       throw new Error(`Resposta inválida contra o schema: ${errs}`);
@@ -118,7 +129,8 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function main() {
   console.log(
     `Worker iniciado. Fila: ${BASE}. Intervalo: ${POLL_INTERVAL_MS}ms.` +
-      (ONCE ? " (modo --once)" : "")
+      (ONCE ? " (modo --once)" : "") +
+      (GENERATE_IMAGES ? ` | imagens: ON (${IMAGE_FN_URL})` : " | imagens: OFF")
   );
   do {
     const job = await claimNextJob();

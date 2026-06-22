@@ -101,6 +101,14 @@
           "references": {
             "type": "array",
             "items": { "type": "string" }
+          },
+          "image_url": {
+            "type": "string",
+            "description": "URL pública da imagem gerada (preenchida pelo worker quando GENERATE_IMAGES=true)."
+          },
+          "image_path": {
+            "type": "string",
+            "description": "Caminho da imagem no Storage (preenchido junto com image_url)."
           }
         }
       }
