@@ -41,7 +41,7 @@ Supabase pelo front (não é hospedado no GitHub Pages).
 | Supabase Edge Func. | `create-job`, `generate-image`, `apply-safeguard`.                               | Implementado (deploy a confirmar) |
 | **Worker Local**    | Polling da fila, valida contratos, executa o pipeline de agentes.                | **Implementado** |
 | Claude Code Agents  | Inteligência do sistema (estratégia, escrita, prompts, review).                  | **Implementado** |
-| OpenAI Images       | Geração das imagens a partir dos prompts (edge function `generate-image`).        | Função pronta; integração no worker via `GENERATE_IMAGES` |
+| OpenAI Images       | Geração das imagens a partir dos prompts (edge function `generate-image`).        | Implementado e testado (`gpt-image-2`) |
 | Supabase Storage    | Guardar as imagens geradas e servir URLs (bucket `generated-images`).            | Implementado      |
 
 ## 3. Por que o agente fica local

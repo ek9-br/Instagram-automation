@@ -107,9 +107,9 @@ Sem dependências de runtime, nesta fase a validação é por inspeção + JSON 
 - **Supabase DB + Edge Functions** ✅ — migrations da fila de jobs, `create-job`,
   `generate-image`, `apply-safeguard` (deploy das functions a confirmar).
 - **Supabase Storage** ✅ — bucket `generated-images`.
-- **OpenAI Images** 🟡 — edge function `generate-image` pronta; integração no
-  worker via flag `GENERATE_IMAGES` (requer function deployada + `OPENAI_API_KEY`
-  como secret no Supabase).
+- **OpenAI Images** ✅ — edge function `generate-image` (`gpt-image-2` → Storage
+  público), integrada no worker via flag `GENERATE_IMAGES`. Testada gerando 1
+  imagem ponta a ponta (function deployada + `OPENAI_API_KEY` setada).
 - **Front-end (GitHub Pages)** 🟡 — app Vite/React com auth pronto; build OK;
   deploy no GitHub Pages pendente.
 - **Publicação no Instagram** ⬜ — integração com a API do Instagram (não iniciado).
