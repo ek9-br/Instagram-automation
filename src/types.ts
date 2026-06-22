@@ -88,7 +88,8 @@ export interface CreativeFormat {
 }
 
 export const CREATIVE_FORMATS: CreativeFormat[] = [
-  { id: "9_16", label: "9:16 (Stories/Reels)", safeguard: "story_9_16", w: 1080, h: 1920 },
+  { id: "9_16", label: "9:16 (Stories)", safeguard: "story_9_16", w: 1080, h: 1920 },
+  { id: "9_16_reels", label: "9:16 (Reels)", safeguard: "story_9_16", w: 1080, h: 1920 },
   { id: "3_4", label: "3:4 (Feed)", safeguard: "feed_3_4", w: 1080, h: 1440 },
   { id: "4_5", label: "4:5 (Feed)", safeguard: "feed_4_5", w: 1080, h: 1350 },
 ];
@@ -126,10 +127,22 @@ export interface SafezoneSpec {
 // convertidos para % sobre o canvas 1080×1920. As fontes variam um pouco; usei o
 // perfil de Reels (mais restritivo, com coluna de botões à direita) para o 9:16.
 export const INSTAGRAM_SAFEZONES: Record<string, SafezoneSpec> = {
+  // Stories (1080×1920): topo ~250px (~13%, foto/nome do perfil) e base ~250px
+  // (~13%, barra de resposta / sticker de link). Sem coluna de botões à direita;
+  // margem lateral leve para stickers. Fonte: outfy.com/blog/instagram-safe-zone.
+  "9_16": {
+    top: 13,
+    bottom: 13,
+    left: 5,
+    right: 5,
+    zones: [
+      { side: "top", label: "Perfil / nome" },
+      { side: "bottom", label: "Resposta · link · stickers" },
+    ],
+  },
   // Reels (1080×1920): topo 108px (~6%), base 320px (~17%), esquerda 60px (~6%),
   // direita 120px (~11%, coluna de curtir/comentar/enviar/salvar).
-  // Stories é parecido (sem a coluna direita; barra de resposta na base).
-  "9_16": {
+  "9_16_reels": {
     top: 6,
     bottom: 17,
     left: 6,
