@@ -9,6 +9,11 @@ Convenções de slide:
 - Último slide = **CTA**.
 - Slides intermediários = desenvolvimento conforme o template.
 
+> **Contexto Coalize (B2B / RH-DP):** os exemplos abaixo são genéricos — ao aplicar,
+> use o universo da marca (ponto eletrônico, banco de horas, jornada, admissão
+> digital, assinatura digital, conformidade, fechamento de folha) e o público real
+> (gestores de RH/DP, donos de empresa, contadores). Ver `brand_bible.md`.
+
 ---
 
 ## 1. `lista` — Lista
@@ -36,9 +41,9 @@ Processo sequencial.
 - Ação: CTA
 
 ## 5. `quebra_de_objecao` — Quebra de objeção
-- Capa: declara a objeção comum ("Acho que é caro demais")
+- Capa: declara a objeção comum (ex.: "Trocar o ponto em papel vai bagunçar a equipe")
 - Desenvolvimento: rebate com prova/lógica/reframing
-- CTA: remover o atrito ("Fale com a gente sem compromisso")
+- CTA: remover o atrito ("Teste grátis" / "Fale com um especialista")
 
 ## 6. `antes_e_depois` — Antes e depois
 - Capa: a transformação prometida
@@ -79,3 +84,26 @@ Processo sequencial.
 - **Stories/Reels (`stories_9x16`, `reels_cover_9x16`)**: gancho de aida/pas na
   capa; conteúdo desdobrado em sequência curta.
 - **Ads (`ads_landscape_1_91_1`)**: aida ou pas, foco em 1 promessa + 1 CTA.
+
+---
+
+### Notas para o contexto Coalize (B2B RH/DP)
+
+**Objeções comuns** (alimentam `pas`, `quebra_de_objecao`, `aida`):
+- "Mudar de ponto em papel/planilha vai dar trabalho / atrapalhar a rotina."
+- "A equipe não vai se adaptar ao app / ao facial."
+- "É caro para o meu tamanho de empresa."
+- "Tenho receio de não ficar em conformidade com a legislação."
+- "Já tenho um sistema / o contador resolve."
+
+**CTAs recomendados** (verbo + benefício; um por peça):
+- "Faça um teste grátis" → https://www.coalize.com.br/cadastro/gestor
+- "Fale com um especialista" / "Saiba mais" + link do produto (ver `brand_bible.md`)
+- "Salve este checklist", "Envie para o seu RH", "Marca aquele contador" (contador parceiro)
+
+**Regras de conteúdo:**
+- `estudo_de_caso` só com números **verificáveis** (usar a prova social do
+  `brand_bible.md`; não inventar resultados de cliente).
+- Não prometer conformidade jurídica absoluta — a Coalize **facilita** a gestão e
+  usa relógios homologados, mas não substitui orientação jurídica.
+- Só citar recurso que exista (lista de produtos no `brand_bible.md`).

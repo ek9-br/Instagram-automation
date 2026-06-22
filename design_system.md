@@ -37,6 +37,9 @@ para não poluir.
 
 ## 4. Tipografia
 
+- **Família da marca:** **Proxima Nova** (corpo) e **Proxima Nova Condensed**
+  (títulos/display). Sans-serif geométrica. Na ausência dela, usar uma sans-serif
+  geométrica equivalente.
 - **Display/headline:** peso bold/extrabold. Tamanho relativo: ~9–12% da altura
   da arte para feed/carrossel; ~7–9% para stories/reels.
 - **Corpo:** peso regular/medium, alto contraste com o fundo.
@@ -64,9 +67,17 @@ para não poluir.
 
 ## 7. Cor e composição (diretrizes)
 
-- Paleta vem de `brand_bible.md` (seção Diretrizes visuais).
-- Fundo deve garantir legibilidade do texto; preferir áreas chapadas atrás de
-  blocos de texto.
+- Paleta da marca (Coalize) — ver `brand_bible.md` para o uso:
+  - Primária (teal/verde): `#14998D`
+  - Accent/CTA (teal claro): `#1CD8C7`
+  - Teal escuro (blocos/fundos): `#083A36` / `#003E3D`
+  - Neutros: grafite `#1F2933`, slate `#3E4C59` / `#616E7C`
+  - Fundos claros: off-white `#F5F7FA`, branco `#FFFFFF`
+- **Estilo de imagem:** fotografia realista com **pessoas** (RH/DP, gestores,
+  colaboradores) em ambiente de trabalho brasileiro; teal/verde como apoio sutil.
+  **Não** usar ilustração/flat/ícone/dashboard fictício como elemento principal.
+- Fundo deve garantir legibilidade do texto; preferir áreas chapadas (off-white ou
+  teal escuro) atrás de blocos de texto.
 - Evitar mais de 3 cores dominantes por peça.
 - Imagens devem ter ponto focal claro e respeitar a *safe area*.
 
