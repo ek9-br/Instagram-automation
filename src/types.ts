@@ -69,3 +69,35 @@ export const STATUS_LABELS: Record<PostStatus, string> = {
 export function formatOf(unit: ImageUnit): MetaFormat | undefined {
   return META_FORMATS.find((f) => f.id === unit.formatId);
 }
+
+// ---- Criativos (página dedicada: prompt → gera imagem → aplica safezone) ----
+
+export type CreativeStatus = "idle" | "generating" | "safezone" | "done" | "error";
+
+export interface CreativeFormat {
+  id: string; // valor salvo no Creative
+  label: string;
+  safeguard: string; // id do formato na edge function apply-safeguard
+  w: number;
+  h: number;
+}
+
+export const CREATIVE_FORMATS: CreativeFormat[] = [
+  { id: "9_16", label: "9:16 (Stories/Reels)", safeguard: "story_9_16", w: 1080, h: 1920 },
+  { id: "3_4", label: "3:4 (Feed)", safeguard: "feed_3_4", w: 1080, h: 1440 },
+  { id: "4_5", label: "4:5 (Feed)", safeguard: "feed_4_5", w: 1080, h: 1350 },
+];
+
+export interface Creative {
+  id: string;
+  formatId: string; // CREATIVE_FORMATS.id
+  prompt: string;
+  status: CreativeStatus;
+  rawUrl: string | null; // imagem gerada (antes da safezone)
+  finalUrl: string | null; // imagem com a safezone aplicada (resultado final)
+  error: string | null;
+}
+
+export function creativeFormatOf(c: Creative): CreativeFormat | undefined {
+  return CREATIVE_FORMATS.find((f) => f.id === c.formatId);
+}

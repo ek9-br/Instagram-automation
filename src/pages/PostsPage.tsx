@@ -124,6 +124,9 @@ export default function PostsPage() {
         <h1>Posts</h1>
         {loading && <span className="muted small">carregando opções…</span>}
         {user?.email && <span className="muted small user-email">{user.email}</span>}
+        <button className="btn ghost" onClick={() => navigate("/criativos")}>
+          Criativos
+        </button>
         <button className="btn ghost" onClick={() => navigate("/opcoes")}>
           Gerenciar opções
         </button>

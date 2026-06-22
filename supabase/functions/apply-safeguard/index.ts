@@ -12,6 +12,7 @@ const BUCKET = "generated-images";
 const SPECS: Record<string, { rw: number; rh: number; cw: number; ch: number }> = {
   feed_1_1: { rw: 950, rh: 950, cw: 1080, ch: 1080 },
   feed_3_4: { rw: 1000, rh: 1150, cw: 1080, ch: 1440 },
+  feed_4_5: { rw: 1000, rh: 1230, cw: 1080, ch: 1350 },
   story_9_16: { rw: 950, rh: 1920, cw: 1080, ch: 1920 },
 };
 
