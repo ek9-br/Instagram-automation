@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { getPost, upsertPost, usePosts } from "../store";
+import { getPost, upsertPost, usePosts, usePostsLoaded } from "../store";
 import type { ImageUnit, Post } from "../types";
 import { STATUS_LABELS, TIPO_LABELS, formatOf } from "../types";
 import { generateImage, newSlide } from "../agent/mockAgent";
@@ -11,12 +11,13 @@ export default function PostDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   usePosts(); // re-render ao mudar o store
+  const loaded = usePostsLoaded();
   const post = id ? getPost(id) : undefined;
 
   if (!post) {
     return (
       <div className="page">
-        <p>Post não encontrado.</p>
+        <p className="muted">{loaded ? "Post não encontrado." : "Carregando…"}</p>
         <button className="btn" onClick={() => navigate("/")}>
           ← Voltar
         </button>

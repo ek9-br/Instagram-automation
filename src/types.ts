@@ -38,6 +38,7 @@ export interface ImageUnit {
 
 export interface Post {
   id: string;
+  createdBy?: string; // e-mail de quem criou (posts são compartilhados)
   tipo: PostTipo;
   tema: string;
   sentimentoIds: string[]; // multi-select: 1+ sentimentos/tons

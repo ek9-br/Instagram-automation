@@ -162,7 +162,10 @@ export default function PostsPage() {
         <button className="btn ghost" onClick={() => navigate("/opcoes")}>
           Gerenciar opções
         </button>
-        <button className="btn primary" onClick={() => upsertPost(emptyPost())}>
+        <button
+          className="btn primary"
+          onClick={() => upsertPost({ ...emptyPost(), createdBy: user?.email ?? undefined })}
+        >
           + Nova linha
         </button>
         <button className="btn ghost" onClick={() => void logout()}>
@@ -206,6 +209,11 @@ export default function PostsPage() {
                       </option>
                     ))}
                   </select>
+                  {post.createdBy && (
+                    <div className="muted small" style={{ marginTop: 4 }}>
+                      por {post.createdBy}
+                    </div>
+                  )}
                 </td>
                 <td>
                   {post.tipo === "carrossel" ? (
