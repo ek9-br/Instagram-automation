@@ -25,6 +25,10 @@ body {
   margin: 0 auto;
   padding: 24px;
 }
+/* Páginas com tabela larga (Posts/Criativos) usam quase toda a largura. */
+.page.wide {
+  max-width: min(1680px, 97vw);
+}
 
 .page-header {
   display: flex;
@@ -238,7 +242,9 @@ table.sheet {
   border-radius: 6px;
   padding: 6px 8px;
   font-size: 13px;
-  min-width: 110px;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 .sheet textarea {
   width: 100%;

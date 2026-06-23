@@ -118,7 +118,7 @@ export default function PostsPage() {
   }
 
   return (
-    <div className="page">
+    <div className="page wide">
       <header className="page-header">
         <h1>Posts</h1>
         {loading && <span className="muted small">carregando opções…</span>}
