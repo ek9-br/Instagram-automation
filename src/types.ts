@@ -40,7 +40,7 @@ export interface Post {
   id: string;
   tipo: PostTipo;
   tema: string;
-  sentimentoId: string | null;
+  sentimentoIds: string[]; // multi-select: 1+ sentimentos/tons
   anguloId: string | null;
   ctaId: string | null;
   legendaId: string | null;

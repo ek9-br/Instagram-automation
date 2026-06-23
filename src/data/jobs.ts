@@ -5,7 +5,7 @@ export interface CreateJobPayload {
   tipo: string; // post | carrossel | criativo
   tema: string;
   slides_count?: number;
-  sentimento_id: string | null;
+  sentimento_ids: string[];
   angulo_id: string | null;
   cta_id: string | null;
   legenda_id: string | null;

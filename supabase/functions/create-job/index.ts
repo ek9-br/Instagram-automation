@@ -37,7 +37,7 @@ interface CreateJobBody {
   objective?: string;
   slides_count?: number;
   // ids das tabelas de lookup (selects do front)
-  sentimento_id?: string | null;
+  sentimento_ids?: string[];
   angulo_id?: string | null;
   cta_id?: string | null;
   legenda_id?: string | null;
@@ -77,9 +77,16 @@ Deno.serve(async (req) => {
       const { data } = await supabase.from(table).select("label").eq("id", id).maybeSingle();
       return data?.label ?? null;
     }
+    // Resolve vários labels (multi-select), preservando a ordem dos ids.
+    async function labelsByIds(table: string, ids?: string[]): Promise<string[]> {
+      if (!ids || !ids.length) return [];
+      const { data } = await supabase.from(table).select("id,label").in("id", ids);
+      const byId = new Map((data ?? []).map((r: { id: string; label: string }) => [r.id, r.label]));
+      return ids.map((id) => byId.get(id)).filter((l): l is string => !!l);
+    }
 
-    const [sentimento, angulo, cta, legenda, template] = await Promise.all([
-      labelById("sentimentos", body.sentimento_id),
+    const [sentimentos, angulo, cta, legenda, template] = await Promise.all([
+      labelsByIds("sentimentos", body.sentimento_ids),
       labelById("angulos", body.angulo_id),
       labelById("ctas", body.cta_id),
       labelById("legendas", body.legenda_id),
@@ -88,7 +95,10 @@ Deno.serve(async (req) => {
 
     // Monta o briefing a partir do tema + diretrizes dos selects.
     const parts: string[] = [tema.endsWith(".") ? tema : `${tema}.`];
-    if (sentimento) parts.push(`Sentimento/tom desejado: ${sentimento}.`);
+    if (sentimentos.length)
+      parts.push(
+        `${sentimentos.length > 1 ? "Sentimentos/tons desejados" : "Sentimento/tom desejado"}: ${sentimentos.join(", ")}.`
+      );
     if (angulo) parts.push(`Ângulo de abordagem: ${angulo}.`);
     if (template) parts.push(`Estilo de template visual: ${template}.`);
     if (legenda) parts.push(`Estilo de legenda: ${legenda}.`);

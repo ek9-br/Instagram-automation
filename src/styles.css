@@ -252,6 +252,64 @@ table.sheet {
   resize: vertical;
   font-family: inherit;
 }
+/* Multi-select (campo Sentimento) — dropdown de checkboxes inline. */
+.multi {
+  width: 100%;
+}
+.multi > summary {
+  list-style: none;
+  cursor: pointer;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.multi > summary::-webkit-details-marker {
+  display: none;
+}
+.multi > summary::after {
+  content: "▾";
+  float: right;
+  opacity: 0.6;
+}
+.multi[open] > summary::after {
+  content: "▴";
+}
+.multi-menu {
+  margin-top: 4px;
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--panel);
+}
+.multi-opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.multi-opt:hover {
+  background: var(--border);
+}
+.multi-opt input {
+  width: auto;
+  min-width: 0;
+  margin: 0;
+}
 /* Criativos: resultados (gerada/safezone/final) e ações empilhadas. */
 .cre-results {
   display: flex;

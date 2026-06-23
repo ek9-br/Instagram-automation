@@ -12,7 +12,7 @@ function emptyPost(): Post {
     id: newPostId(),
     tipo: "post",
     tema: "",
-    sentimentoId: null,
+    sentimentoIds: [],
     anguloId: null,
     ctaId: null,
     legendaId: null,
@@ -76,6 +76,39 @@ function SelectCell(props: {
   );
 }
 
+// Multi-select compacto (dropdown com checkboxes) para campos com 1+ valores.
+function MultiSelectCell(props: {
+  value: string[];
+  options: Option[];
+  onChange: (ids: string[]) => void;
+}) {
+  const selected = props.value ?? [];
+  const toggle = (id: string) =>
+    props.onChange(selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id]);
+  const summary =
+    selected.length === 0
+      ? "—"
+      : selected.length === 1
+        ? props.options.find((o) => o.id === selected[0])?.label ?? "1 selecionado"
+        : `${selected.length} selecionados`;
+  return (
+    <details className="multi">
+      <summary title={selected.map((id) => props.options.find((o) => o.id === id)?.label).join(", ")}>
+        {summary}
+      </summary>
+      <div className="multi-menu">
+        {props.options.length === 0 && <span className="muted small">sem opções</span>}
+        {props.options.map((o) => (
+          <label key={o.id} className="multi-opt">
+            <input type="checkbox" checked={selected.includes(o.id)} onChange={() => toggle(o.id)} />
+            <span>{o.label}</span>
+          </label>
+        ))}
+      </div>
+    </details>
+  );
+}
+
 export default function PostsPage() {
   const posts = usePosts();
   const navigate = useNavigate();
@@ -104,7 +137,7 @@ export default function PostsPage() {
         tipo: post.tipo,
         tema: post.tema,
         slides_count: post.slidesCount,
-        sentimento_id: post.sentimentoId,
+        sentimento_ids: post.sentimentoIds,
         angulo_id: post.anguloId,
         cta_id: post.ctaId,
         legenda_id: post.legendaId,
@@ -201,10 +234,10 @@ export default function PostsPage() {
                   />
                 </td>
                 <td>
-                  <SelectCell
-                    value={post.sentimentoId}
+                  <MultiSelectCell
+                    value={post.sentimentoIds}
                     options={lookups.sentimentos}
-                    onChange={(id) => patch(post, { sentimentoId: id })}
+                    onChange={(ids) => patch(post, { sentimentoIds: ids })}
                   />
                 </td>
                 <td>
