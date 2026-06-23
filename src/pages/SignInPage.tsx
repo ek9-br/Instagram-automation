@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
 export default function SignInPage() {
@@ -50,9 +50,6 @@ export default function SignInPage() {
         <button className="btn primary" type="submit" disabled={busy}>
           {busy ? "Entrando…" : "Entrar"}
         </button>
-        <p className="auth-alt">
-          Não tem conta? <Link to="/signup">Criar conta</Link>
-        </p>
       </form>
     </div>
   );
