@@ -108,7 +108,6 @@ export default function PostsPage() {
         angulo_id: post.anguloId,
         cta_id: post.ctaId,
         legenda_id: post.legendaId,
-        template_id: post.templateId,
       });
       upsertPost({ ...post, jobId: job_id, status: "texto_gerado" });
     } catch (e) {
@@ -149,7 +148,6 @@ export default function PostsPage() {
               <th>Ângulo</th>
               <th>CTA</th>
               <th>Legenda</th>
-              <th>Template</th>
               <th>Status</th>
               <th></th>
             </tr>
@@ -157,7 +155,7 @@ export default function PostsPage() {
           <tbody>
             {posts.length === 0 && (
               <tr>
-                <td colSpan={10} className="empty">
+                <td colSpan={9} className="empty">
                   Nenhum post ainda. Clique em "+ Nova linha".
                 </td>
               </tr>
@@ -228,13 +226,6 @@ export default function PostsPage() {
                     value={post.legendaId}
                     options={lookups.legendas}
                     onChange={(id) => patch(post, { legendaId: id })}
-                  />
-                </td>
-                <td>
-                  <SelectCell
-                    value={post.templateId}
-                    options={lookups.templates}
-                    onChange={(id) => patch(post, { templateId: id })}
                   />
                 </td>
                 <td>

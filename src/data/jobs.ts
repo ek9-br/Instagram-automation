@@ -9,7 +9,6 @@ export interface CreateJobPayload {
   angulo_id: string | null;
   cta_id: string | null;
   legenda_id: string | null;
-  template_id: string | null;
 }
 
 export interface CreateJobResult {
@@ -50,9 +49,13 @@ export interface PostResponseImagePrompt {
   target: string;
   label?: string;
   prompt: string;
+  template?: string; // template visual escolhido para a peça
+  prompt_status?: "idle" | "requested" | "done" | "error";
   aspect: string;
   negative?: string;
   references?: string[];
+  image_url?: string;
+  image_path?: string;
 }
 export interface PostResponse {
   job_id: string;

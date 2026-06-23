@@ -1,28 +1,20 @@
 import { useEffect, useState } from "react";
 import {
-  APPROVAL_LABELS,
-  APPROVER_EMAIL,
   fetchJob,
-  applySafeGuard,
   finalizeJob,
   generateImageFromPrompt,
   JOB_STATUS_LABELS,
-  SAFE_GUARD_FORMATS,
   saveJobContent,
-  setApproval,
   type JobRow,
   type JobStatus,
   type PostResponse,
 } from "../data/jobs";
 import { addImage, imagesByIds } from "../data/imageBank";
+import { useLookups } from "../data/lookups";
 import ReferenceImages from "./ReferenceImages";
-import { useAuth } from "../auth/AuthContext";
 
 const STEPS: JobStatus[] = ["pending", "processing", "done"];
-
-// Prompt usado ao reenviar o safe guard à OpenAI para naturalizar o fundo preto.
-const BG_REPLACE_PROMPT =
-  "Substitua o fundo preto desta imagem por uma extensão natural e contínua do próprio cenário/fundo da imagem, preenchendo todas as bordas pretas até as extremidades. Mantenha o conteúdo central (produto, pessoas, textos) exatamente na mesma posição e tamanho, sem mover, cortar ou cobrir. Resultado fotográfico, coeso e natural, pronto para anúncio.";
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 function StatusTimeline({ status }: { status: JobStatus }) {
   const currentIdx = STEPS.indexOf(status);
@@ -43,47 +35,27 @@ function StatusTimeline({ status }: { status: JobStatus }) {
   );
 }
 
-function CommentField({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-}) {
+function CommentField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
     <div className="comment-field">
       <span className="comment-icon">💬</span>
-      <textarea
-        rows={1}
-        placeholder="Comentário…"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      />
+      <textarea rows={1} placeholder="Comentário…" value={value} onChange={(e) => onChange(e.target.value)} />
     </div>
   );
 }
 
 export default function JobResult({ jobId }: { jobId: string }) {
-  const { user } = useAuth();
-  const isApprover = user?.email === APPROVER_EMAIL;
+  const { data: lookups } = useLookups();
 
   const [job, setJob] = useState<JobRow | null>(null);
   const [loading, setLoading] = useState(true);
-
-  // aprovação
-  const [notes, setNotes] = useState("");
-  const [approving, setApproving] = useState(false);
-  const [approvalError, setApprovalError] = useState<string | null>(null);
 
   // geração de imagens (uma por prompt) / finalização
   const [imgByIdx, setImgByIdx] = useState<Record<number, string>>({});
   const [busyIdx, setBusyIdx] = useState<number | null>(null);
   const [errByIdx, setErrByIdx] = useState<Record<number, string>>({});
   const [refsByIdx, setRefsByIdx] = useState<Record<number, string[]>>({});
-  const [sgByIdx, setSgByIdx] = useState<Record<number, string>>({});
-  const [natByIdx, setNatByIdx] = useState<Record<number, string>>({});
-  const [sgBusy, setSgBusy] = useState(false);
-  const [sgError, setSgError] = useState<string | null>(null);
+  const [promptBusy, setPromptBusy] = useState<Record<number, boolean>>({});
   const [finalBusy, setFinalBusy] = useState(false);
 
   // edição do conteúdo gerado
@@ -102,11 +74,10 @@ export default function JobResult({ jobId }: { jobId: string }) {
   }, [lightbox]);
 
   async function reload() {
-    const j = await fetchJob(jobId);
-    setJob(j);
-    setNotes(j?.approval_notes ?? "");
+    setJob(await fetchJob(jobId));
   }
 
+  // polling do job até concluir/erro
   useEffect(() => {
     let active = true;
     let timer: ReturnType<typeof setTimeout>;
@@ -115,7 +86,6 @@ export default function JobResult({ jobId }: { jobId: string }) {
         const j = await fetchJob(jobId);
         if (!active) return;
         setJob(j);
-        setNotes((n) => (n === "" ? j?.approval_notes ?? "" : n));
         setLoading(false);
         if (j && (j.status === "done" || j.status === "error")) return;
       } catch {
@@ -142,7 +112,6 @@ export default function JobResult({ jobId }: { jobId: string }) {
     setComments((c) => ({ ...c, [key]: value }));
     setDirty(true);
   }
-
   function patchDraft(changes: Partial<PostResponse>) {
     setDraft((d) => (d ? { ...d, ...changes } : d));
     setDirty(true);
@@ -175,20 +144,59 @@ export default function JobResult({ jobId }: { jobId: string }) {
     }
   }
 
-  async function aprovar(approval: "approved" | "changes_requested") {
-    if (approval === "changes_requested" && !notes.trim()) {
-      setApprovalError("Descreva a alteração no campo de observações.");
+  // ---- Gerar prompt (sob demanda, via worker + Claude) ----
+  // Marca o box como 'requested' (com o template escolhido), persiste no job e
+  // faz polling até o worker preencher o prompt; depois mescla no draft.
+  async function gerarPrompt(i: number) {
+    if (!draft) return;
+    const ip = draft.image_prompts[i];
+    if (!ip.template) {
+      alert("Selecione um template antes de gerar o prompt.");
       return;
     }
-    setApprovalError(null);
-    setApproving(true);
+    const requested: PostResponse = {
+      ...draft,
+      image_prompts: draft.image_prompts.map((p, idx) =>
+        idx === i ? { ...p, prompt_status: "requested" } : p
+      ),
+    };
+    setDraft(requested);
+    setErrByIdx((m) => ({ ...m, [i]: "" }));
+    setPromptBusy((b) => ({ ...b, [i]: true }));
     try {
-      await setApproval(jobId, approval, notes.trim());
-      await reload();
+      await saveJobContent(jobId, requested, comments);
+      setDirty(false);
+      // aguarda o worker preencher o prompt deste box
+      for (let t = 0; t < 80; t++) {
+        await sleep(3000);
+        const j = await fetchJob(jobId);
+        const filled = j?.response?.image_prompts?.[i];
+        if (filled && filled.prompt_status === "done" && filled.prompt) {
+          setDraft((d) =>
+            d
+              ? {
+                  ...d,
+                  image_prompts: d.image_prompts.map((p, idx) =>
+                    idx === i
+                      ? { ...p, prompt: filled.prompt, negative: filled.negative ?? p.negative, prompt_status: "done" }
+                      : p
+                  ),
+                }
+              : d
+          );
+          return;
+        }
+        if (filled && filled.prompt_status === "error") {
+          setErrByIdx((m) => ({ ...m, [i]: "Falha ao gerar o prompt. Tente de novo." }));
+          patchPrompt(i, { prompt_status: "error" });
+          return;
+        }
+      }
+      setErrByIdx((m) => ({ ...m, [i]: "Tempo esgotado esperando o worker. O worker local está rodando?" }));
     } catch (e) {
-      setApprovalError(e instanceof Error ? e.message : String(e));
+      setErrByIdx((m) => ({ ...m, [i]: e instanceof Error ? e.message : String(e) }));
     } finally {
-      setApproving(false);
+      setPromptBusy((b) => ({ ...b, [i]: false }));
     }
   }
 
@@ -197,7 +205,6 @@ export default function JobResult({ jobId }: { jobId: string }) {
     setBusyIdx(idx);
     setErrByIdx((e) => ({ ...e, [idx]: "" }));
     try {
-      // imagens de referência selecionadas → URLs enviadas junto ao prompt
       const references = imagesByIds(refsByIdx[idx] ?? []).map((b) => b.url);
       const { url } = await generateImageFromPrompt(prompt, aspect, references);
       addImage(url, `${draft.theme} · imagem ${idx + 1}`, "gerada");
@@ -206,35 +213,6 @@ export default function JobResult({ jobId }: { jobId: string }) {
       setErrByIdx((m) => ({ ...m, [idx]: e instanceof Error ? e.message : String(e) }));
     } finally {
       setBusyIdx(null);
-    }
-  }
-
-  async function aplicarSafeGuards() {
-    if (!draft) return;
-    setSgError(null);
-    setSgBusy(true);
-    try {
-      for (let i = 0; i < draft.image_prompts.length; i++) {
-        const p = draft.image_prompts[i];
-        const src = imgByIdx[i];
-        const fid = p.target.startsWith("format:") ? p.target.slice("format:".length) : null;
-        if (!src || !fid || !SAFE_GUARD_FORMATS.has(fid)) continue;
-
-        // 1) safe guard (miolo redimensionado sobre fundo preto)
-        const { url: sgUrl } = await applySafeGuard(src, fid);
-        addImage(sgUrl, `${draft.theme} · SafeGuard ${p.label ?? fid}`, "gerada");
-        setSgByIdx((m) => ({ ...m, [i]: sgUrl }));
-
-        // 2) reenvia o safe guard à OpenAI (auto-selecionado) para trocar o
-        //    fundo preto por uma extensão natural do fundo da imagem.
-        const { url: natUrl } = await generateImageFromPrompt(BG_REPLACE_PROMPT, p.aspect, [sgUrl]);
-        addImage(natUrl, `${draft.theme} · SafeGuard natural ${p.label ?? fid}`, "gerada");
-        setNatByIdx((m) => ({ ...m, [i]: natUrl }));
-      }
-    } catch (e) {
-      setSgError(e instanceof Error ? e.message : String(e));
-    } finally {
-      setSgBusy(false);
     }
   }
 
@@ -254,7 +232,6 @@ export default function JobResult({ jobId }: { jobId: string }) {
   if (!job) return <p className="error-banner">Job não encontrado.</p>;
 
   const isError = job.status === "error";
-  const approved = job.approval === "approved";
 
   return (
     <div className="job-result">
@@ -273,11 +250,7 @@ export default function JobResult({ jobId }: { jobId: string }) {
           </div>
         </div>
       )}
-      {!isError ? (
-        <StatusTimeline status={job.status} />
-      ) : (
-        <span className="status status-job-error">Erro</span>
-      )}
+      {!isError ? <StatusTimeline status={job.status} /> : <span className="status status-job-error">Erro</span>}
 
       {isError && <p className="error-banner">{job.error ?? "Falha ao processar o job."}</p>}
 
@@ -296,36 +269,34 @@ export default function JobResult({ jobId }: { jobId: string }) {
             </div>
           )}
 
-          {/* Estratégia: somente leitura — a IA já decidiu, editar aqui não tem efeito. */}
           <section className="resp-block">
-            <h2>Estratégia <span className="muted small">(referência)</span></h2>
+            <h2>
+              Estratégia <span className="muted small">(referência)</span>
+            </h2>
             <dl className="resp-grid">
-              <dt>Tema</dt><dd>{draft.theme}</dd>
-              <dt>Ângulo</dt><dd>{draft.angle}</dd>
-              <dt>Promessa</dt><dd>{draft.promise}</dd>
-              <dt>Público</dt><dd>{draft.target_audience}</dd>
-              <dt>Template</dt><dd>{draft.selected_template}</dd>
-              <dt>Formato</dt><dd>{draft.format}</dd>
+              <dt>Tema</dt>
+              <dd>{draft.theme}</dd>
+              <dt>Ângulo</dt>
+              <dd>{draft.angle}</dd>
+              <dt>Promessa</dt>
+              <dd>{draft.promise}</dd>
+              <dt>Público</dt>
+              <dd>{draft.target_audience}</dd>
+              <dt>Template (narrativa)</dt>
+              <dd>{draft.selected_template}</dd>
+              <dt>Formato</dt>
+              <dd>{draft.format}</dd>
             </dl>
           </section>
 
-          {/* Após a geração, é uma legenda única (CTA já embutido). */}
           <section className="resp-block">
             <h2>Legenda</h2>
             <label className="field">
-              <textarea
-                rows={6}
-                value={draft.caption}
-                onChange={(e) => patchDraft({ caption: e.target.value })}
-              />
+              <textarea rows={6} value={draft.caption} onChange={(e) => patchDraft({ caption: e.target.value })} />
             </label>
-            <CommentField
-              value={comments["caption"] ?? ""}
-              onChange={(v) => patchComment("caption", v)}
-            />
+            <CommentField value={comments["caption"] ?? ""} onChange={(v) => patchComment("caption", v)} />
           </section>
 
-          {/* Cada slide é um texto bruto editável. */}
           <section className="resp-block">
             <h2>Slides ({draft.slides.length})</h2>
             <div className="slides-edit">
@@ -339,127 +310,112 @@ export default function JobResult({ jobId }: { jobId: string }) {
                       onChange={(e) => patchSlide(i, { title: e.target.value, body: "" })}
                     />
                   </label>
-                  <CommentField
-                    value={comments[`slide:${i}`] ?? ""}
-                    onChange={(v) => patchComment(`slide:${i}`, v)}
-                  />
+                  <CommentField value={comments[`slide:${i}`] ?? ""} onChange={(v) => patchComment(`slide:${i}`, v)} />
                 </div>
               ))}
             </div>
           </section>
 
           <section className="resp-block">
-            <h2>Prompts de imagem ({draft.image_prompts.length})</h2>
-            {!approved && (
-              <p className="muted small">🔒 Gerar imagem fica disponível após a aprovação.</p>
-            )}
+            <h2>Imagens ({draft.image_prompts.length})</h2>
+            <p className="muted small">
+              Para cada peça: escolha o <strong>template</strong> → <strong>Gerar prompt</strong> (o worker cria o
+              prompt) → <strong>Gerar imagem</strong>.
+            </p>
             <ul className="resp-prompts">
-              {draft.image_prompts.map((p, i) => (
-                <li key={i}>
-                  <div className="prompt-head">
-                    <strong>{p.label ?? p.target}</strong>
-                    <span className="chip">{p.aspect}</span>
-                  </div>
-                  <label className="field">
-                    <span>Prompt</span>
-                    <textarea
-                      rows={3}
-                      value={p.prompt}
-                      onChange={(e) => patchPrompt(i, { prompt: e.target.value })}
-                    />
-                  </label>
-                  <label className="field">
-                    <span>Negativo</span>
-                    <input
-                      value={p.negative ?? ""}
-                      onChange={(e) => patchPrompt(i, { negative: e.target.value })}
-                    />
-                  </label>
-                  <CommentField
-                    value={comments[`prompt:${i}`] ?? ""}
-                    onChange={(v) => patchComment(`prompt:${i}`, v)}
-                  />
-                  <ReferenceImages
-                    selectedIds={refsByIdx[i] ?? []}
-                    onChange={(ids) => setRefsByIdx((m) => ({ ...m, [i]: ids }))}
-                  />
-                  <div className="prompt-gen">
-                    <button
-                      className="btn primary small"
-                      disabled={!approved || busyIdx !== null}
-                      title={!approved ? "Aprove o post antes de gerar as imagens" : undefined}
-                      onClick={() => void gerarImagem(i, p.prompt, p.aspect)}
-                    >
-                      {busyIdx === i
-                        ? "Gerando…"
-                        : imgByIdx[i]
-                          ? "Gerar nova versão"
-                          : "Gerar imagem"}
-                    </button>
-                    {busyIdx === i && (
-                      <span className="gen-status">
-                        <span className="spinner" /> Gerando imagem na OpenAI… pode levar ~1 min.
-                      </span>
-                    )}
-                    {imgByIdx[i] && (
-                      <img
-                        className="prompt-thumb"
-                        src={imgByIdx[i]}
-                        alt={`Imagem ${i + 1}`}
-                        title="Clique para ampliar"
-                        onClick={() => setLightbox(imgByIdx[i])}
+              {draft.image_prompts.map((p, i) => {
+                const requesting = promptBusy[i] || p.prompt_status === "requested";
+                const hasPrompt = !!p.prompt?.trim();
+                return (
+                  <li key={i}>
+                    <div className="prompt-head">
+                      <strong>{p.label ?? p.target}</strong>
+                      <span className="chip">{p.aspect}</span>
+                    </div>
+
+                    <label className="field">
+                      <span>Template (obrigatório)</span>
+                      <select
+                        value={p.template ?? ""}
+                        disabled={requesting}
+                        onChange={(e) => patchPrompt(i, { template: e.target.value || undefined })}
+                      >
+                        <option value="">— selecione —</option>
+                        {lookups.templates.map((t) => (
+                          <option key={t.id} value={t.label}>
+                            {t.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <div className="prompt-gen">
+                      <button
+                        className="btn small"
+                        disabled={!p.template || requesting}
+                        title={!p.template ? "Escolha um template primeiro" : undefined}
+                        onClick={() => void gerarPrompt(i)}
+                      >
+                        {requesting ? "Gerando prompt…" : hasPrompt ? "Regerar prompt" : "Gerar prompt"}
+                      </button>
+                      {requesting && (
+                        <span className="gen-status">
+                          <span className="spinner" /> O worker está criando o prompt…
+                        </span>
+                      )}
+                    </div>
+
+                    <label className="field">
+                      <span>Prompt</span>
+                      <textarea
+                        rows={3}
+                        value={p.prompt ?? ""}
+                        placeholder="Vazio até gerar o prompt (escolha o template e clique em Gerar prompt)."
+                        onChange={(e) => patchPrompt(i, { prompt: e.target.value })}
                       />
-                    )}
-                    {sgByIdx[i] && (
-                      <figure className="sg-thumb">
+                    </label>
+                    <label className="field">
+                      <span>Negativo</span>
+                      <input value={p.negative ?? ""} onChange={(e) => patchPrompt(i, { negative: e.target.value })} />
+                    </label>
+                    <CommentField value={comments[`prompt:${i}`] ?? ""} onChange={(v) => patchComment(`prompt:${i}`, v)} />
+                    <ReferenceImages
+                      selectedIds={refsByIdx[i] ?? []}
+                      onChange={(ids) => setRefsByIdx((m) => ({ ...m, [i]: ids }))}
+                    />
+                    <div className="prompt-gen">
+                      <button
+                        className="btn primary small"
+                        disabled={!hasPrompt || busyIdx !== null}
+                        title={!hasPrompt ? "Gere o prompt antes de gerar a imagem" : undefined}
+                        onClick={() => void gerarImagem(i, p.prompt, p.aspect)}
+                      >
+                        {busyIdx === i ? "Gerando…" : imgByIdx[i] ? "Gerar nova versão" : "Gerar imagem"}
+                      </button>
+                      {busyIdx === i && (
+                        <span className="gen-status">
+                          <span className="spinner" /> Gerando imagem na OpenAI… pode levar ~1 min.
+                        </span>
+                      )}
+                      {imgByIdx[i] && (
                         <img
-                          src={sgByIdx[i]}
-                          alt={`Safe guard ${i + 1}`}
+                          className="prompt-thumb"
+                          src={imgByIdx[i]}
+                          alt={`Imagem ${i + 1}`}
                           title="Clique para ampliar"
-                          onClick={() => setLightbox(sgByIdx[i])}
+                          onClick={() => setLightbox(imgByIdx[i])}
                         />
-                        <figcaption>safe guard</figcaption>
-                      </figure>
-                    )}
-                    {natByIdx[i] && (
-                      <figure className="sg-thumb">
-                        <img
-                          src={natByIdx[i]}
-                          alt={`Safe guard natural ${i + 1}`}
-                          title="Clique para ampliar"
-                          onClick={() => setLightbox(natByIdx[i])}
-                        />
-                        <figcaption>natural</figcaption>
-                      </figure>
-                    )}
-                  </div>
-                  {errByIdx[i] && <p className="error-banner">{errByIdx[i]}</p>}
-                </li>
-              ))}
+                      )}
+                    </div>
+                    {errByIdx[i] && <p className="error-banner">{errByIdx[i]}</p>}
+                  </li>
+                );
+              })}
             </ul>
 
-            {draft.image_prompts.some((p) => p.target.startsWith("format:")) &&
-              Object.keys(imgByIdx).length > 0 && (
-                <div className="safeguard-bar">
-                  <button
-                    className="btn primary"
-                    disabled={sgBusy}
-                    onClick={() => void aplicarSafeGuards()}
-                  >
-                    {sgBusy ? "Aplicando…" : "Aplicar Safe Guards"}
-                  </button>
-                  <span className="muted small">
-                    Redimensiona com fundo preto (1:1 → 1080×1080, 3:4 → 1080×1440, 9:16 →
-                    1080×1920), depois reenvia à OpenAI para trocar o preto por um fundo natural —
-                    tudo salvo na biblioteca.
-                  </span>
-                  {sgError && <p className="error-banner">{sgError}</p>}
-                </div>
-              )}
-
             <p className="muted small">
-              Safe area — topo {draft.safe_area.top_pct}% · base {draft.safe_area.bottom_pct}% ·
-              laterais {draft.safe_area.side_pct}%
+              Safe area — topo {draft.safe_area.top_pct}% · base {draft.safe_area.bottom_pct}% · laterais{" "}
+              {draft.safe_area.side_pct}%
             </p>
           </section>
 
@@ -488,81 +444,19 @@ export default function JobResult({ jobId }: { jobId: string }) {
             )}
           </section>
 
-          {/* ---- Aprovação ---- */}
-          <section className="resp-block approval">
-            <h2>
-              Aprovação{" "}
-              <span className={`status approval-${job.approval}`}>
-                {APPROVAL_LABELS[job.approval]}
-              </span>
-            </h2>
-            {job.approved_by && (
-              <p className="muted small">
-                Aprovado por {job.approved_by}
-                {job.approved_at ? ` em ${new Date(job.approved_at).toLocaleString("pt-BR")}` : ""}
-              </p>
-            )}
-
-            {isApprover ? (
-              <>
-                <label className="field">
-                  <span>Observações (preencha ao solicitar alterações)</span>
-                  <textarea
-                    rows={3}
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Ex.: trocar o gancho do slide 1, suavizar o CTA…"
-                  />
-                </label>
-                {approvalError && <p className="error-banner">{approvalError}</p>}
-                <div className="approval-actions">
-                  <button
-                    className="btn primary"
-                    disabled={approving || approved}
-                    onClick={() => void aprovar("approved")}
-                  >
-                    {approved ? "Aprovado" : "Aprovar"}
-                  </button>
-                  <button
-                    className="btn"
-                    disabled={approving}
-                    onClick={() => void aprovar("changes_requested")}
-                  >
-                    Solicitar alterações
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                {job.approval_notes && (
-                  <p className="obs-box">
-                    <strong>Observações:</strong> {job.approval_notes}
-                  </p>
-                )}
-                <p className="muted small">Somente {APPROVER_EMAIL} pode aprovar.</p>
-              </>
-            )}
-          </section>
-
-          {/* ---- Ações (bloqueadas até aprovação) ---- */}
           <section className="resp-block">
             <h2>Ações</h2>
-            {!approved && (
-              <p className="muted small">🔒 Finalizar fica disponível somente após a aprovação.</p>
-            )}
             <div className="approval-actions">
               <button
                 className="btn"
-                disabled={!approved || finalBusy || !!job.finalized_at}
+                disabled={finalBusy || !!job.finalized_at}
                 onClick={() => void finalizar()}
               >
                 {job.finalized_at ? "Finalizado" : finalBusy ? "Finalizando…" : "Finalizar post"}
               </button>
             </div>
             {job.finalized_at && (
-              <p className="muted small">
-                Finalizado em {new Date(job.finalized_at).toLocaleString("pt-BR")}
-              </p>
+              <p className="muted small">Finalizado em {new Date(job.finalized_at).toLocaleString("pt-BR")}</p>
             )}
           </section>
         </div>

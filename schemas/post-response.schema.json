@@ -81,7 +81,7 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["target", "prompt", "aspect"],
+        "required": ["target", "aspect"],
         "properties": {
           "target": {
             "type": "string",
@@ -92,7 +92,19 @@
             "type": "string",
             "description": "Rótulo da peça (ex.: 'Feed 1:1', 'Stories / Reels 9:16')."
           },
-          "prompt": { "type": "string", "minLength": 1 },
+          "prompt": {
+            "type": "string",
+            "description": "Prompt da imagem. Vazio até o usuário escolher o template e clicar em 'Gerar prompt' (gerado sob demanda pelo worker)."
+          },
+          "template": {
+            "type": "string",
+            "description": "Template visual escolhido para esta peça (label da tabela de lookup templates)."
+          },
+          "prompt_status": {
+            "type": "string",
+            "enum": ["idle", "requested", "done", "error"],
+            "description": "Estado da geração do prompt sob demanda."
+          },
           "aspect": {
             "type": "string",
             "enum": ["square", "portrait", "landscape"]

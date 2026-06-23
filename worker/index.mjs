@@ -11,6 +11,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import Ajv from "ajv";
 import { runPipeline, runMockPipeline } from "./pipeline.mjs";
+import { runClaudeJson } from "./engine.mjs";
 import { attachImages, DEFAULT_FN } from "./images.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -123,6 +124,69 @@ async function processJob(job) {
   }
 }
 
+// ---- geração de prompt sob demanda ----------------------------------------
+// Gera o prompt de UMA peça (box) via Claude, lendo os arquivos de contexto
+// (design_system.md, brand_bible.md). Muta `ip` (image_prompt).
+async function generatePromptFor(response, ip) {
+  const slides = Array.isArray(response.slides) ? response.slides : [];
+  const m = /^slide:(\d+)$/.exec(ip.target);
+  const slide = m ? slides.find((s) => String(s.index) === m[1]) : slides[0];
+  const userPrompt = [
+    "Você é o image-prompt-writer. Leia os arquivos design_system.md e brand_bible.md (na raiz do projeto) e gere UM prompt de imagem em português do Brasil para a peça abaixo.",
+    `Marca: ${response.brand}. Formato: ${response.format} (aspecto: ${ip.aspect}).`,
+    `Template visual desejado: "${ip.template ?? ""}".`,
+    slide
+      ? `Conteúdo da peça: título "${slide.title}", texto "${slide.body ?? ""}".`
+      : `Tema da peça: ${response.theme}.`,
+    `Tema do post: ${response.theme}. Ângulo: ${response.angle}.`,
+    "Regras: respeite a paleta, a tipografia, o estilo de imagem e a safe area do design system; alinhe ao template visual indicado; NÃO embuta texto na imagem (o texto é renderizado por cima); ponto focal claro; coerente com a marca.",
+    'Responda APENAS com um objeto JSON: {"prompt": "<descrição visual rica em português>", "negative": "<o que evitar>"}',
+  ].join("\n");
+  const out = await runClaudeJson(userPrompt, { allowedTools: ["Read"], label: `prompt ${ip.target}` });
+  ip.prompt = String(out.prompt ?? "").trim();
+  if (out.negative) ip.negative = String(out.negative).trim();
+  ip.prompt_status = ip.prompt ? "done" : "error";
+}
+
+// Varre jobs 'done' com boxes em prompt_status='requested' e gera os prompts.
+async function processPromptRequests() {
+  const res = await fetch(
+    `${BASE}?status=eq.done&order=finished_at.desc&limit=50&select=id,response`,
+    { headers }
+  );
+  const jobs = await res.json();
+  if (!Array.isArray(jobs)) return 0;
+  let processed = 0;
+  for (const job of jobs) {
+    const resp = job.response;
+    if (!resp || !Array.isArray(resp.image_prompts)) continue;
+    const pending = resp.image_prompts.filter((ip) => ip.prompt_status === "requested");
+    if (!pending.length) continue;
+    console.log(`\n[job ${job.id}] gerando ${pending.length} prompt(s)…`);
+    for (const ip of pending) {
+      try {
+        if (MOCK) {
+          ip.prompt = `Imagem ${ip.aspect} no estilo "${ip.template}" para ${ip.target} (mock).`;
+          ip.prompt_status = "done";
+        } else {
+          await generatePromptFor(resp, ip);
+        }
+        console.log(`  ✓ ${ip.target} (${ip.prompt_status})`);
+      } catch (e) {
+        ip.prompt_status = "error";
+        console.error(`  ✗ ${ip.target}: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
+    await fetch(`${BASE}?id=eq.${job.id}`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify({ response: resp }),
+    });
+    processed++;
+  }
+  return processed;
+}
+
 // ---- loop principal --------------------------------------------------------
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -137,13 +201,19 @@ async function main() {
     if (job) {
       await processJob(job);
       if (ONCE) break;
-    } else {
-      if (ONCE) {
-        console.log("Nenhum job pending.");
-        break;
-      }
-      await sleep(POLL_INTERVAL_MS);
+      continue;
     }
+    // sem job pending → atende requisições de prompt (sob demanda)
+    const filled = await processPromptRequests();
+    if (filled) {
+      if (ONCE) break;
+      continue;
+    }
+    if (ONCE) {
+      console.log("Nada pendente (jobs ou prompts).");
+      break;
+    }
+    await sleep(POLL_INTERVAL_MS);
   } while (true);
 }
 
