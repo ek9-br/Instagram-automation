@@ -152,7 +152,10 @@ export default function CriativosPage() {
         </button>
         <h1>Criativos</h1>
         {user?.email && <span className="muted small user-email">{user.email}</span>}
-        <button className="btn primary" onClick={() => upsertCreative(emptyCreative())}>
+        <button
+          className="btn primary"
+          onClick={() => upsertCreative({ ...emptyCreative(), createdBy: user?.email ?? undefined })}
+        >
           + Nova linha
         </button>
         <button className="btn ghost" onClick={() => void logout()}>
@@ -200,6 +203,11 @@ export default function CriativosPage() {
                       </option>
                     ))}
                   </select>
+                  {c.createdBy && (
+                    <div className="muted small" style={{ marginTop: 4 }}>
+                      por {c.createdBy}
+                    </div>
+                  )}
                 </td>
                 <td>
                   <textarea

@@ -99,6 +99,7 @@ export interface Creative {
   formatId: string; // CREATIVE_FORMATS.id
   prompt: string;
   referenceImageIds: string[]; // imagens do banco enviadas no payload da OpenAI
+  createdBy?: string; // e-mail de quem criou (criativos são compartilhados)
   status: CreativeStatus;
   rawUrl: string | null; // 1) imagem gerada (crua)
   safezoneUrl: string | null; // 2) safezone preta aplicada
