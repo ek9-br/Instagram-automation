@@ -39,9 +39,6 @@ Referências: peças de fundo azul-marinho ("A crença mais comum…", "Você co
 ## Imagem / transparências
 - Quando houver texto sobre foto: **véu azul-marinho `#0A1F33` translúcido ~55–70%**;
   fotos podem ter duotone azul-marinho para integrar.
-- **Mockups/telas** muitas vezes aparecem **esmaecidos/integrados ao fundo navy**
-  (ghosted, baixa opacidade), como elemento de profundidade — não como mockup nítido
-  e destacado. Linhas/curvas finas em teal a baixa opacidade reforçam o fundo.
 
 ## Sensação
 - Autoridade, foco, sobriedade. Navy como base, teal `#1CD8C7` como destaque,

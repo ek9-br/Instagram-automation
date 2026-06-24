@@ -36,6 +36,10 @@ O visual da direita nunca cobre o texto da esquerda.
 - **Pessoa recortada** (meio corpo) **e/ou** **mockup de produto** (janela de app/
   navegador ou **laptop** mostrando a interface, ex.: dashboard com lista/cards).
 - Ancorado à **direita**; pode **transbordar/cortar** na borda direita.
+- **Tratamento do visual** (escolha de disposição, **independente do estilo**):
+  - **Nítido/destacado:** mockup ou pessoa em primeiro plano, alto contraste.
+  - **Esmaecido/integrado ao fundo (ghosted):** mockup/imagem em baixa opacidade,
+    fundido ao fundo como elemento de profundidade (não compete com o texto).
 - **Formas decorativas** (círculos, linhas/curvas) ao fundo, dando profundidade.
 - **Pontilhados** discretos opcionais em um canto.
 

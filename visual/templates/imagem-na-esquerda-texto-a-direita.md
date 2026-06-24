@@ -20,6 +20,10 @@ Pode ser uma destas (ou combinação):
 Ancorado à **esquerda**; pode **sangrar/cortar** na borda esquerda. Formas
 decorativas e pontilhados opcionais ao fundo.
 
+**Tratamento do visual** (escolha de disposição, **independente do estilo**):
+**nítido/destacado** (primeiro plano, alto contraste) **ou** **esmaecido/integrado
+ao fundo (ghosted)** (baixa opacidade, fundido como profundidade).
+
 ## Coluna direita — elementos (de cima para baixo; use o que o conteúdo pedir)
 1. **Logo** (topo da coluna) ou no rodapé.
 2. **Eyebrow / rótulo** (opcional, caixa alta).

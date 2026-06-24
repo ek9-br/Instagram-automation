@@ -19,8 +19,10 @@ discretas** da marca. O **texto é o protagonista**, ocupando a maior parte da p
    podendo vir com um **ícone** ao lado.
 4. **Destaque em caixa** (opcional): uma afirmação curta dentro de um **bloco/box
    com contorno** (ex.: "O DETALHE MUDA TUDO."), eventualmente com ícone à esquerda.
-5. **CTA** (opcional): botão, se a peça pedir conversão.
-6. **Logo** da marca (rodapé — centralizado ou em um canto).
+5. **Fileira de ícones** (opcional): 2–3 ícones em selo, em linha, **separados por
+   divisores verticais**, como apoio visual ao texto (não é lista com descrição).
+6. **CTA** (opcional): botão, se a peça pedir conversão.
+7. **Logo** da marca (rodapé — centralizado ou em um canto).
 
 ## Alinhamento
 - Pode ser **centralizado** (peça de citação) ou **alinhado à esquerda** (peça

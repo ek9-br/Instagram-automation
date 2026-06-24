@@ -29,7 +29,11 @@ recebe **todo o texto**, sobreposto e alinhado à esquerda. Sem divisão em colu
 
 ## Imagem (fundo)
 - Full-bleed, preenchendo 100% da peça.
-- **Ponto focal / sujeito à direita**, deixando a faixa esquerda desobstruída.
+- **Ponto focal / sujeito à direita**, deixando a faixa esquerda desobstruída. O
+  sujeito pode ser uma **pessoa** ou um **objeto/elemento** (ex.: relógio).
+- **Tratamento do sujeito** (escolha de disposição, **independente do estilo**):
+  **nítido/destacado** (primeiro plano) **ou** **esmaecido/integrado ao fundo
+  (ghosted)** — imagem em baixa opacidade, como atmosfera/profundidade.
 - A região esquerda deve permanecer **legível** para o texto (área mais vazia/escura
   da cena; o tratamento de contraste/overlay é definido pelo estilo, não aqui).
 
