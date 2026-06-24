@@ -20,6 +20,8 @@ Referências: peças de fundo azul-marinho ("A crença mais comum…", "Você co
 - **Destaque / palavra-chave / aspas / ícones:** verde claro `#1CD8C7`.
 - **Eyebrow / rótulo** (caixa alta): verde claro `#1CD8C7`.
 - **Linhas / divisores:** finos, em `#1CD8C7` ou branco a baixa opacidade (~20–30%).
+- **Status (✓/✗):** positivo/adequado em verde claro `#1CD8C7`; negativo/inadequado
+  em coral-rosa (aprox. `#F2607D`) — ex.: cards de comparação "Empresa A" vs "Empresa B".
 
 ## Botão / CTA
 - **Botão claro:** fundo branco, texto escuro `#1F2933`, negrito, cantos arredondados

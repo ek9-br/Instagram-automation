@@ -16,6 +16,8 @@ sem correria").
   `#1CD8C7`) — usado em uma parte do título e em palavras-chave.
 - **Ícones e linhas:** verde `#14998D`.
 - **Bordas / divisores:** cinza claro `#CBD2D9`; divisor curto sob o subtítulo em verde.
+- **Status (✓/✗):** positivo/sucesso em verde `#14998D`/`#1CD8C7`; negativo/erro em
+  coral-rosa (aprox. `#F2607D` — derivado das peças; o Guia usa `#f44336` em forms).
 
 ## Botão / CTA (variações observadas)
 - **Pílula preenchida:** fundo verde `#14998D`, texto branco, negrito, cantos

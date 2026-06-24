@@ -23,7 +23,10 @@ O visual da direita nunca cobre o texto da esquerda.
 5. **Conteúdo principal**, que pode ser:
    - um **subtítulo / parágrafo**, e/ou
    - uma **lista de destaques** (3–4 itens empilhados), cada item com **ícone** em
-     selo circular à esquerda + **1–3 linhas** de texto.
+     selo circular à esquerda + **1–3 linhas** de texto; e/ou
+   - **cards de comparação** (ex.: dois cards empilhados, um com status **positivo
+     (✓)** e outro **negativo (✗)** — "Empresa A" vs "Empresa B"), cada card com
+     ícone de status + título + 1–2 linhas.
 6. **Linha de fechamento / destaque** (frase de impacto), abaixo do conteúdo,
    normalmente precedida por um **divisor**.
 7. **CTA** (opcional): botão/pílula com ícone + texto + seta.

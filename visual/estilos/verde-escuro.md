@@ -14,6 +14,8 @@ trabalhista por falta de controle de ponto?").
   claro `#CBD2D9`.
 - **Destaque / palavra ou linha-chave:** verde claro `#1CD8C7`.
 - **Ícones, linhas e divisores:** verde claro `#1CD8C7` e/ou branco (divisores finos).
+- **Status (✓/✗):** positivo em verde claro `#1CD8C7`; negativo em coral-rosa
+  (aprox. `#F2607D`).
 
 ## Botão / CTA
 - **Botão claro** (sobre fundo escuro): fundo **branco**, texto escuro `#1F2933`,
