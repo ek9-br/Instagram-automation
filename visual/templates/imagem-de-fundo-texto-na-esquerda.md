@@ -12,10 +12,14 @@ recebe **todo o texto**, sobreposto e alinhado à esquerda. Sem divisão em colu
 é uma imagem única com o texto por cima.
 
 ## Texto sobreposto — ordem vertical (coluna esquerda, de cima para baixo)
-1. **Headline / blocos de texto**, no terço **superior-esquerdo**. Pode ser um único
+1. **Eyebrow / abertura** (opcional): rótulo curto em caixa alta **ou** um **número
+   ordinal grande** (ex.: "01.") marcando um slide de série.
+2. **Headline / blocos de texto**, no terço **superior-esquerdo**. Pode ser um único
    título ou **vários blocos curtos empilhados** (ex.: 3 frases em sequência),
    **separados por divisores** (linha curta) entre um bloco e outro.
-2. **Linha de destaque / fechamento** (frase de impacto), abaixo dos blocos. Pode
+3. **Conteúdo de apoio** (opcional): parágrafo curto e/ou uma **checklist** — itens
+   com marcador **✓** à esquerda (título + 1–2 linhas), tipicamente entre divisores.
+4. **Linha de destaque / fechamento** (frase de impacto), abaixo dos blocos. Pode
    vir acompanhada de um **ícone de seta (→) em um selo** à esquerda da frase.
 3. **CTA** (opcional): botão na base-esquerda, se a peça pedir.
 4. **Rodapé:**
@@ -30,7 +34,9 @@ recebe **todo o texto**, sobreposto e alinhado à esquerda. Sem divisão em colu
 ## Imagem (fundo)
 - Full-bleed, preenchendo 100% da peça.
 - **Ponto focal / sujeito à direita**, deixando a faixa esquerda desobstruída. O
-  sujeito pode ser uma **pessoa** ou um **objeto/elemento** (ex.: relógio).
+  sujeito pode ser uma **pessoa**, um **objeto/elemento** (ex.: relógio, ampulheta),
+  uma **ilustração de linha** (ex.: documento/relógio desenhado) ou uma **cena com
+  elementos flutuantes** (ex.: balões de chat, cards).
 - **Tratamento do sujeito** (escolha de disposição, **independente do estilo**):
   **nítido/destacado** (primeiro plano) **ou** **esmaecido/integrado ao fundo
   (ghosted)** — imagem em baixa opacidade, como atmosfera/profundidade.
