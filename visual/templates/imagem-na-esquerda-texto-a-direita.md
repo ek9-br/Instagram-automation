@@ -18,11 +18,9 @@ Pode ser uma destas (ou combinação):
 - **Mockup de celular em destaque** com **elementos 3D flutuantes** ao redor
   (ex.: ícones/checks 3D), sobre uma **forma decorativa** clara.
 Ancorado à **esquerda**; pode **sangrar/cortar** na borda esquerda. Formas
-decorativas e pontilhados opcionais ao fundo.
-
-**Tratamento do visual** (escolha de disposição, **independente do estilo**):
-**nítido/destacado** (primeiro plano, alto contraste) **ou** **esmaecido/integrado
-ao fundo (ghosted)** (baixa opacidade, fundido como profundidade).
+decorativas e pontilhados opcionais ao fundo. Visual em **primeiro plano / nítido**
+(alto contraste). Para a versão **esmaecida/ghosted**, use o template irmão
+`Imagem na esquerda - texto a direita (esmaecida)`.
 
 ## Coluna direita — elementos (de cima para baixo; use o que o conteúdo pedir)
 1. **Logo** (topo da coluna) ou no rodapé.

@@ -1,41 +1,43 @@
 # Estilo: Verde Escuro
 
-Cores, fundo, texto, fonte e acabamento (o **template** define o layout). Fonte de
-verdade: Guia Visual. Referência: peça de fundo verde-escuro ("Já enfrentou processo
-trabalhista por falta de controle de ponto?").
+**Só acabamento visual** — fonte, tamanho/cor de texto, cores, sombra, transparência
+e raio. **Não** define disposição (isso é do template). Fonte de verdade: Guia Visual
+(token "fundo escuro" `#083A36`).
 
 ## Fonte
-- **Proxima Nova.** Corpo `400`; títulos `700` (line-height curto); botões negrito.
+- **Proxima Nova** em tudo.
+- Pesos: **título `700`** (line-height curto), **corpo `400`**, **botões negrito**.
+
+## Tamanho / hierarquia de texto
+- **Headline** grande e dominante; **subtítulo/parágrafo** médio; **eyebrow** pequeno
+  em **caixa alta** com leve tracking; **apoio** menor. Forte contraste de tamanho.
 
 ## Cores
-- **Fundo:** verde-escuro da marca `#083A36` (token "fundo escuro" do Guia Visual —
-  cor de autoridade / alto impacto).
-- **Título:** branco `#FFFFFF` (peso `700`). **Corpo:** off-white `#F5F7FA` / cinza
+- **Fundo:** verde-escuro da marca `#083A36` (autoridade / alto impacto).
+- **Texto título:** branco `#FFFFFF`. **Texto corpo:** off-white `#F5F7FA` / cinza
   claro `#CBD2D9`.
-- **Destaque / palavra ou linha-chave:** verde claro `#1CD8C7`.
-- **Ícones, linhas e divisores:** verde claro `#1CD8C7` e/ou branco (divisores finos).
-- **Status (✓/✗):** positivo em verde claro `#1CD8C7`; negativo em coral-rosa
-  (aprox. `#F2607D`).
+- **Destaque / palavra-chave / aspas:** verde claro `#1CD8C7`.
+- **Eyebrow:** verde claro `#1CD8C7`.
+- **Ícones, linhas e divisores:** verde claro `#1CD8C7` e/ou branco (finos).
+- **Status:** positivo `#1CD8C7`; negativo coral-rosa `#F2607D`.
 
-## Botão / CTA
-- **Botão claro** (sobre fundo escuro): fundo **branco**, texto escuro `#1F2933`,
-  negrito, cantos arredondados (~`6px`+), **seta verde**. (Ex.: pílula branca
-  "Teste grátis".)
-- Alternativa: pílula preenchida em verde claro `#1CD8C7` com texto escuro.
+## Botões (cores e acabamento)
+- **Claro:** fundo **branco**, texto escuro `#1F2933`, negrito, seta verde.
+- **Alternativa:** preenchido em verde claro `#1CD8C7` com texto escuro.
+- **Raio:** ~`6px`+.
 
-## Badges e ícones
-- **Badge de ícone:** círculo de fundo verde mais escuro/translúcido com o ícone em
-  verde claro `#1CD8C7` ou branco.
+## Cards e superfícies (acabamento)
+- Superfície em verde mais escuro/translúcido; **borda/realce** em `#1CD8C7` quando
+  houver. **Badge de ícone:** círculo translúcido com ícone em `#1CD8C7` ou branco.
 
-## Decoração
-- **Formas/curvas** sutis em verde claro a baixa opacidade ao fundo; pontilhados
-  discretos opcionais.
+## Sombra
+- Discreta; profundidade vem mais do contraste sobre o fundo escuro do que de sombra.
 
-## Imagem / transparências
-- Foto integrada (ex.: recorte circular sobre o fundo verde) **ou** **véu verde-escuro
-  `#083A36` translúcido ~55–70%** atrás do texto. Fotos podem ter leve duotone
-  verde-escuro para integrar ao fundo.
+## Transparências / overlay
+- Texto sobre foto: **véu verde-escuro `#083A36` ~55–70%**; fotos podem ter leve
+  **duotone** verde-escuro para integrar.
+- Formas/curvas decorativas em verde claro a **baixa opacidade**.
 
 ## Sensação
-- Autoridade, sobriedade, premium. Verde-escuro como base, verde claro `#1CD8C7`
-  como destaque, branco no texto. Máximo de 3 cores dominantes.
+- Autoridade, sobriedade, premium. Verde-escuro como base, `#1CD8C7` como destaque,
+  branco no texto. Máximo de 3 cores dominantes.

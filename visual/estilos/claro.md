@@ -1,47 +1,45 @@
 # Estilo: Claro
 
-Cores, fundo, texto, fonte e acabamento (o **template** define o layout). Fonte de
-verdade: Guia Visual da Coalize. Referências: peças de fundo claro (ex.: "Espelho de
-ponto", "Produtividade para seus clientes", "Gestão de ponto simples", "Fim do mês
-sem correria").
+**Só acabamento visual** — fonte, tamanho/cor de texto, cores, sombra, transparência
+e raio. **Não** define disposição/onde ficam os elementos (isso é do template).
+Fonte de verdade: Guia Visual da Coalize.
 
 ## Fonte
-- **Proxima Nova.** Corpo peso `400`; títulos peso `700` com line-height curto;
-  botões em **negrito**.
+- **Proxima Nova** em tudo.
+- Pesos: **título `700`** (line-height curto), **corpo `400`**, **botões negrito**.
+
+## Tamanho / hierarquia de texto
+- **Headline:** grande, dominante. **Subtítulo/parágrafo:** médio. **Eyebrow:**
+  pequeno, em **caixa alta** com leve espaçamento entre letras. **Legendas/apoio:**
+  menor. Manter contraste de tamanho forte entre headline e corpo.
 
 ## Cores
-- **Fundo:** off-white `#F5F7FA` nas seções; branco `#FFFFFF` nos cards.
-- **Título:** `#1F2933` (escuro, forte). **Corpo:** cinza `#3E4C59`.
-- **Destaque / palavra ou linha-chave:** verde principal `#14998D` (ou verde claro
-  `#1CD8C7`) — usado em uma parte do título e em palavras-chave.
+- **Fundo:** off-white `#F5F7FA`; branco `#FFFFFF` em superfícies/cards.
+- **Texto título:** `#1F2933`. **Texto corpo:** cinza `#3E4C59`.
+- **Destaque / palavra-chave:** verde principal `#14998D` (ou verde claro `#1CD8C7`).
+- **Eyebrow:** verde `#14998D`.
 - **Ícones e linhas:** verde `#14998D`.
-- **Bordas / divisores:** cinza claro `#CBD2D9`; divisor curto sob o subtítulo em verde.
-- **Status (✓/✗):** positivo/sucesso em verde `#14998D`/`#1CD8C7`; negativo/erro em
-  coral-rosa (aprox. `#F2607D` — derivado das peças; o Guia usa `#f44336` em forms).
+- **Bordas / divisores:** cinza claro `#CBD2D9`; divisor de destaque em verde.
+- **Status:** positivo/sucesso `#14998D`/`#1CD8C7`; negativo/erro coral-rosa `#F2607D`
+  (o Guia usa `#f44336` em forms).
 
-## Botão / CTA (variações observadas)
-- **Pílula preenchida:** fundo verde `#14998D`, texto branco, negrito, cantos
-  arredondados (~`6px`+), seta opcional. (Ex.: "Teste grátis", "Bater ponto".)
-- **Pílula clara/contornada:** fundo branco com borda leve, **selo de ícone** verde à
-  esquerda + texto escuro + **seta verde**. (Ex.: "Cadastre-se e comece agora!".)
-- **Barra de fechamento full-width:** faixa preenchida em verde `#14998D`, texto
-  branco, com **selo circular branco de check** à esquerda.
+## Botões (cores e acabamento)
+- **Preenchido:** fundo verde `#14998D`, texto branco, negrito.
+- **Claro/contornado:** fundo branco, borda leve `#CBD2D9`, texto escuro, ícone/seta
+  verde.
+- **Raio:** ~`6px`+ (cantos arredondados).
 
-## Cards e badges
-- **Cards:** fundo branco, borda leve `#CBD2D9`, **sombra suave**, cantos
-  arredondados (~`8–12px`).
-- **Badge de ícone:** círculo de fundo verde **bem claro** (teal suave) com o **ícone
-  em verde** `#14998D` (contorno/linha).
+## Cards e superfícies (acabamento)
+- Fundo branco, **borda leve** `#CBD2D9`, **sombra suave**, raio ~`8–12px`.
+- **Badge de ícone:** fundo verde **bem claro**, ícone em verde `#14998D`.
 
-## Decoração
-- **Formas orgânicas** (círculos) em verde `#14998D` e em **verde muito claro** ao
-  fundo, atrás de pessoa/mockup.
-- **Padrão de pontilhados** em verde, discreto, em um canto.
+## Sombra
+- **Suave e difusa** (elevação leve), nunca dura. Em cards e elementos flutuantes.
 
-## Imagem / transparências
-- Fotos reais, claras e iluminadas. Quando houver texto sobre foto, **véu
-  branco/off-white translúcido ~70–80%** atrás do texto.
+## Transparências / overlay
+- Texto sobre foto: **véu branco/off-white ~70–80%**.
+- Formas/pontilhados decorativos em verde a **baixa opacidade**.
 
 ## Sensação
-- Limpo, arejado, institucional e confiável. Muito branco; verde como cor de ação.
+- Limpo, arejado, institucional, confiável. Muito branco; verde como cor de ação.
   Máximo de 3 cores dominantes.
