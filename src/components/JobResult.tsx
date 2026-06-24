@@ -151,8 +151,8 @@ export default function JobResult({ jobId }: { jobId: string }) {
   async function gerarPrompt(i: number) {
     if (!draft) return;
     const ip = draft.image_prompts[i];
-    if (!ip.template) {
-      alert("Selecione um template antes de gerar o prompt.");
+    if (!ip.template || !ip.estilo) {
+      alert("Selecione o template e o estilo antes de gerar o prompt.");
       return;
     }
     const requested: PostResponse = {
@@ -350,7 +350,7 @@ export default function JobResult({ jobId }: { jobId: string }) {
                       </select>
                     </label>
                     <label className="field">
-                      <span>Estilo</span>
+                      <span>Estilo (obrigatório)</span>
                       <select
                         value={p.estilo ?? ""}
                         disabled={requesting}
@@ -368,8 +368,14 @@ export default function JobResult({ jobId }: { jobId: string }) {
                     <div className="prompt-gen">
                       <button
                         className="btn small"
-                        disabled={!p.template || requesting}
-                        title={!p.template ? "Escolha um template primeiro" : undefined}
+                        disabled={!p.template || !p.estilo || requesting}
+                        title={
+                          !p.template
+                            ? "Escolha um template primeiro"
+                            : !p.estilo
+                              ? "Escolha um estilo primeiro"
+                              : undefined
+                        }
                         onClick={() => void gerarPrompt(i)}
                       >
                         {requesting ? "Gerando prompt…" : hasPrompt ? "Regerar prompt" : "Gerar prompt"}

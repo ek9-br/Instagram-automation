@@ -70,6 +70,10 @@ export default function CriativosPage() {
       alert("Cole um prompt antes de gerar.");
       return;
     }
+    if (!c.estilo) {
+      alert("Selecione um estilo antes de gerar.");
+      return;
+    }
     const cur: Creative = {
       ...c,
       status: "generating",
@@ -212,7 +216,7 @@ export default function CriativosPage() {
                     disabled={busy(c)}
                     onChange={(e) => patch(c, { estilo: e.target.value || undefined })}
                   >
-                    <option value="">Estilo — selecione</option>
+                    <option value="">Estilo (obrigatório)</option>
                     {ESTILOS.map((s) => (
                       <option key={s} value={s}>
                         {s}
@@ -272,7 +276,8 @@ export default function CriativosPage() {
                   <div className="cre-actions">
                     <button
                       className="btn primary small"
-                      disabled={busy(c) || !c.prompt.trim()}
+                      disabled={busy(c) || !c.prompt.trim() || !c.estilo}
+                      title={!c.estilo ? "Escolha um estilo primeiro" : undefined}
                       onClick={() => void gerar(c)}
                     >
                       {c.status === "generating"
