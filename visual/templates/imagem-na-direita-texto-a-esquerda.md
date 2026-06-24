@@ -7,42 +7,41 @@ Match com o banco: label `Imagem na direita - texto a esquerda`.
 
 ## Visão geral
 Peça dividida em duas zonas verticais:
-- **Coluna ESQUERDA (~45–50%):** todo o conteúdo textual e o CTA, alinhados à esquerda.
-- **Coluna DIREITA (~50–55%):** o visual — uma **pessoa recortada** + um **mockup de
-  produto** (tela do app/navegador), sobre formas decorativas.
+- **Coluna ESQUERDA (~45–55%):** todo o conteúdo textual (e CTA, se houver),
+  alinhado à esquerda.
+- **Coluna DIREITA (~45–55%):** o visual — **pessoa recortada** e/ou **mockup de
+  produto** (tela de app/navegador, laptop), sobre formas decorativas. O visual pode
+  **sangrar/cortar na borda direita** da peça.
 
-A pessoa e o mockup podem **transbordar/sobrepor** levemente o centro, mas o texto
-da esquerda nunca é coberto.
+O visual da direita nunca cobre o texto da esquerda.
 
-## Coluna esquerda — ordem vertical (de cima para baixo)
-1. **Logo** da marca, no topo.
-2. **Headline** (título grande), alinhado à esquerda, ocupando o terço superior;
-   pode ter várias linhas.
-3. **Divisor** curto (linha/traço) logo abaixo do headline.
-4. **Subtítulo** (1–2 linhas), abaixo do divisor.
-5. **Lista de destaques** (3 itens), empilhados verticalmente. Cada item:
-   - um **ícone** pequeno em um selo/círculo, à esquerda;
-   - **2 linhas** de texto curto à direita do ícone.
-6. **Botão / CTA** na base da coluna: bloco/pílula com **ícone + texto + seta** à direita.
+## Coluna esquerda — elementos (de cima para baixo; use o que o conteúdo pedir)
+1. **Logo** da marca (topo) **ou** logo só no rodapé — ver item 6.
+2. **Eyebrow / rótulo** (linha curta em caixa alta, opcional) introduzindo o tema.
+3. **Headline** (título grande) — opcional, quando a peça abre com título.
+4. **Divisor** curto.
+5. **Conteúdo principal**, que pode ser:
+   - um **subtítulo / parágrafo**, e/ou
+   - uma **lista de destaques** (3–4 itens empilhados), cada item com **ícone** em
+     selo circular à esquerda + **1–3 linhas** de texto.
+6. **Linha de fechamento / destaque** (frase de impacto), abaixo do conteúdo,
+   normalmente precedida por um **divisor**.
+7. **CTA** (opcional): botão/pílula com ícone + texto + seta.
+8. **Logo** no canto **inferior-esquerdo** (quando não estiver no topo).
 
 ## Coluna direita — composição
-- **Pessoa recortada** (waist-up / meio corpo), ancorada à **direita e à base**,
-  como protagonista do visual.
-- **Mockup de produto** (janela de app ou navegador mostrando a interface do produto,
-  ex.: dashboard com grade de cards/ícones) posicionado atrás/ao lado da pessoa, na
-  parte superior-direita, levemente sobreposto.
-- **Formas decorativas** (círculos/blocos orgânicos) ao fundo, atrás da pessoa e do
-  mockup, dando profundidade.
-- **Pontilhados** discretos em um ou dois cantos.
+- **Pessoa recortada** (meio corpo) **e/ou** **mockup de produto** (janela de app/
+  navegador ou **laptop** mostrando a interface, ex.: dashboard com lista/cards).
+- Ancorado à **direita**; pode **transbordar/cortar** na borda direita.
+- **Formas decorativas** (círculos, linhas/curvas) ao fundo, dando profundidade.
+- **Pontilhados** discretos opcionais em um canto.
 
 ## Regras de disposição
-- Texto **sempre alinhado à esquerda**; mantém uma margem segura da borda esquerda.
+- Texto **sempre alinhado à esquerda**, com margem segura da borda esquerda.
 - A metade esquerda fica **visualmente limpa** (sem elementos gráficos competindo
   com o texto).
-- Hierarquia de tamanho: headline > subtítulo > itens da lista > CTA (peso de
-  destaque).
-- A pessoa não cobre o headline nem o CTA; o mockup não invade a área de texto.
-- Respeitar **safe area** do formato; nada crítico encostando nas bordas.
-- O **texto do layout** (headline, lista, CTA) é renderizado por cima na arte — a
-  **foto/IA não deve trazer texto, letras ou números embutidos** na cena (apenas a
-  pessoa, o mockup e as formas).
+- Hierarquia: eyebrow < headline > conteúdo (subtítulo/lista) > fechamento (> CTA).
+- O visual da direita (pessoa/mockup) **não invade** a área de texto.
+- Respeitar **safe area**; nada crítico nas bordas (salvo o visual que sangra à direita).
+- O **texto do layout** é renderizado por cima na arte — a **foto/IA não traz texto,
+  letras ou números embutidos**; ela gera apenas a **pessoa, o mockup e as formas**.
