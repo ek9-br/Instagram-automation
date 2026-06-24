@@ -1,14 +1,33 @@
 # Template: Imagem de fundo — Texto na direita
 
-**Disposição:**
+**Só estrutura/disposição.** Não define cores, fontes nem acabamento (isso vem do
+estilo). Espelho do template "Imagem de fundo - Texto na esquerda".
 
-- **Imagem:** ocupa todo o fundo (full-bleed). Ponto focal/sujeito à **esquerda**,
-  deixando a metade/terço **direito** mais limpo para o texto.
-- **Texto:** bloco alinhado à **direita**, ocupando ~metade direita, do terço
-  superior ao centro. Título forte em cima, apoio abaixo.
-- **Botão/CTA:** logo **abaixo do texto**, alinhado à direita.
-- **Logo:** discreto, canto inferior (lado oposto ao texto, se possível).
-- **Legibilidade:** prever área/overlay atrás do texto à direita (cor/opacidade
-  conforme o estilo).
-- **Safe area:** respeitar margens; nada crítico nas bordas.
-- A imagem **não** deve conter texto embutido.
+Match com o banco: label `Imagem de fundo - Texto na direita`.
+
+## Visão geral
+A **foto ocupa todo o fundo** (full-bleed). O **sujeito** (pessoa) fica posicionado
+à **ESQUERDA**; a metade/terço **DIREITO** é a parte mais limpa/vazia da imagem e
+recebe **todo o texto**, sobreposto. Imagem única com texto por cima (sem colunas).
+
+## Texto sobreposto — ordem vertical (no lado direito, de cima para baixo)
+1. **Headline / blocos de texto** no terço **superior-direito**. Pode ser um título
+   único ou **vários blocos curtos empilhados**, separados por **divisores**.
+2. **Linha de destaque / fechamento**, abaixo dos blocos (pode ter **seta (→)** num selo).
+3. **CTA** (opcional): botão na base-direita.
+4. **Rodapé:** **logo** no canto **inferior-direito**; **tagline secundária** opcional
+   no canto **inferior-esquerdo**.
+
+> Blocos, divisores, seta, CTA e tagline são **opcionais**. Fixo: foto full-bleed,
+> sujeito à esquerda, texto à direita.
+
+## Imagem (fundo)
+- Full-bleed, 100% da peça. **Ponto focal/sujeito à esquerda**, deixando a faixa
+  direita desobstruída e legível para o texto (contraste/overlay vêm do estilo).
+
+## Regras de disposição
+- Texto alinhado de forma consistente no **lado direito**, com margem segura da borda.
+- O sujeito **não invade** a área de texto à direita.
+- Hierarquia: headline/blocos > destaque (> CTA).
+- Respeitar **safe area**; nada crítico nas bordas.
+- A **foto/IA não traz texto embutido** — o texto do layout é renderizado por cima.

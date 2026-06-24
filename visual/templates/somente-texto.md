@@ -1,15 +1,34 @@
 # Template: Somente texto
 
-**Disposição** (sem foto de cena; foco total na mensagem):
+**Só estrutura/disposição.** Não define cores, fontes nem acabamento (isso vem do
+estilo). Peça **sem fotografia** — o peso é tipográfico.
 
-- **Imagem/fundo:** **sem fotografia**. Fundo chapado ou com textura/gradiente
-  sutil e elementos gráficos discretos (formas geométricas da marca). A cor vem
-  do estilo.
-- **Texto:** protagonista, centralizado ou alinhado à esquerda, ocupando a maior
-  parte da peça. Hierarquia clara: frase de destaque grande + apoio.
-- **Botão/CTA:** abaixo do texto, com bom destaque.
-- **Logo:** discreto, canto/rodapé.
-- **Acabamento:** pode usar uma palavra/linha em cor de destaque (conforme o
-  estilo) para dar ritmo.
-- **Safe area:** respeitar margens.
-- Não inserir fotos de pessoas/produtos; o peso é tipográfico.
+Match com o banco: label `Somente texto`.
+
+## Visão geral
+Sem foto de cena. Fundo chapado com, no máximo, **formas geométricas/curvas
+discretas** da marca. O **texto é o protagonista**, ocupando a maior parte da peça.
+
+## Ordem vertical (de cima para baixo; use o que o conteúdo pedir)
+1. **Eyebrow / rótulo** (opcional, linha curta em caixa alta) introduzindo o tema,
+   normalmente seguido de um **divisor**.
+2. **Bloco principal:** frase/afirmação **grande** em destaque — pode ser uma
+   **citação** (com aspas) ou um título forte. É o elemento dominante.
+3. **Linha de apoio / reframe** (opcional): texto menor que complementa ou responde
+   o bloco principal (ex.: "Parcialmente certo. O problema está no detalhe…"),
+   podendo vir com um **ícone** ao lado.
+4. **Destaque em caixa** (opcional): uma afirmação curta dentro de um **bloco/box
+   com contorno** (ex.: "O DETALHE MUDA TUDO."), eventualmente com ícone à esquerda.
+5. **CTA** (opcional): botão, se a peça pedir conversão.
+6. **Logo** da marca (rodapé — centralizado ou em um canto).
+
+## Alinhamento
+- Pode ser **centralizado** (peça de citação) ou **alinhado à esquerda** (peça
+  editorial). Escolher um eixo e manter consistente.
+
+## Regras de disposição
+- Sem fotos de pessoas/produtos; no máximo formas/ícones discretos.
+- Hierarquia clara: eyebrow < bloco principal > apoio > destaque em caixa.
+- Bastante respiro ao redor do texto; **safe area** respeitada.
+- Se houver "destaque em caixa", ele se diferencia por contorno/bloco, não por foto.
+- Todo o texto é parte do layout (renderizado na arte); não há cena de imagem a gerar.
