@@ -17,11 +17,13 @@ Peça em **três blocos horizontais** empilhados:
 - **Subtítulo** (1–2 linhas) abaixo do headline.
 - **Divisor** curto sob o subtítulo.
 - **Pessoa recortada** (meio corpo) ancorada à **direita**, sobre uma **forma
-  decorativa** (círculo) ao fundo. Não cobre o texto da esquerda.
+  decorativa** (círculo) ao fundo. Opcionalmente, um **mockup de app** (card de
+  celular) sobreposto ao lado da pessoa. Não cobre o texto da esquerda.
 
 ## Bloco 2 — Grade 2×2
 - **4 cards** uniformes dispostos em **2 colunas × 2 linhas**.
-- Cada card: **ícone** à esquerda + **texto curto** (2–3 linhas) à direita.
+- Cada card: **ícone** à esquerda + texto à direita. O texto pode ser só um
+  **rótulo curto** ou **título + descrição** (1–2 linhas).
 - Cards com cantos arredondados, espaçamento regular entre eles.
 
 ## Bloco 3 — Barra de fechamento
