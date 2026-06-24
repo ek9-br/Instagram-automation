@@ -12,13 +12,20 @@ recebe **todo o texto**, sobreposto e alinhado à esquerda. Sem divisão em colu
 é uma imagem única com o texto por cima.
 
 ## Texto sobreposto — ordem vertical (coluna esquerda, de cima para baixo)
-1. **Headline** (título), no terço **superior-esquerdo**; pode ter várias linhas.
-2. **Corpo / parágrafo** (texto de apoio mais longo), no **meio-esquerda**, abaixo
-   do headline, com um respiro entre eles.
-3. **Linha de destaque / fechamento** (frase curta de impacto), abaixo do corpo.
-4. **CTA** (opcional): se houver, na base-esquerda. Nesta referência não há botão —
-   o fechamento em destaque encerra a peça.
-5. **Logo** da marca no **canto inferior-esquerdo**.
+1. **Headline / blocos de texto**, no terço **superior-esquerdo**. Pode ser um único
+   título ou **vários blocos curtos empilhados** (ex.: 3 frases em sequência),
+   **separados por divisores** (linha curta) entre um bloco e outro.
+2. **Linha de destaque / fechamento** (frase de impacto), abaixo dos blocos. Pode
+   vir acompanhada de um **ícone de seta (→) em um selo** à esquerda da frase.
+3. **CTA** (opcional): botão na base-esquerda, se a peça pedir.
+4. **Rodapé:**
+   - **Logo** da marca no canto **inferior-esquerdo**.
+   - **Tagline/assinatura secundária** (opcional, 1–2 linhas curtas) no canto
+     **inferior-direito**.
+
+> A quantidade de blocos e a presença de divisor/seta/tagline são **opcionais** —
+> use conforme o conteúdo. O que é fixo: foto full-bleed, sujeito à direita, texto
+> à esquerda.
 
 ## Imagem (fundo)
 - Full-bleed, preenchendo 100% da peça.
@@ -29,8 +36,9 @@ recebe **todo o texto**, sobreposto e alinhado à esquerda. Sem divisão em colu
 ## Regras de disposição
 - Texto **sempre alinhado à esquerda**, com margem segura da borda esquerda.
 - O sujeito **não invade** a coluna de texto à esquerda.
-- Hierarquia: headline > corpo > linha de destaque (> CTA, se houver).
-- Logo discreto no rodapé esquerdo.
+- Hierarquia: headline/blocos > linha de destaque (> CTA, se houver).
+- Divisores (quando usados) separam blocos de texto no mesmo eixo esquerdo.
+- Logo no rodapé esquerdo; tagline secundária, quando houver, no rodapé direito.
 - Respeitar **safe area** do formato; nada crítico nas bordas.
 - O **texto do layout** é renderizado por cima na arte — a **foto/IA não traz texto,
   letras ou números embutidos** (apenas a cena/pessoa).
