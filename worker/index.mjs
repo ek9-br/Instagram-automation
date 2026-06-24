@@ -125,24 +125,47 @@ async function processJob(job) {
 }
 
 // ---- geração de prompt sob demanda ----------------------------------------
+// slug do label → nome de arquivo (igual à convenção em visual/README.md).
+function slugify(s) {
+  return String(s)
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+async function readMd(rel) {
+  try {
+    return (await readFile(path.join(PROJECT_ROOT, rel), "utf8")).trim();
+  } catch {
+    return "";
+  }
+}
+
 // Gera o prompt de UMA peça (box) via Claude, lendo os arquivos de contexto
-// (design_system.md, brand_bible.md). Muta `ip` (image_prompt).
+// (design_system.md, brand_bible.md) + as regras do template e do estilo escolhidos
+// (visual/templates/*.md, visual/estilos/*.md). Muta `ip` (image_prompt).
 async function generatePromptFor(response, ip) {
   const slides = Array.isArray(response.slides) ? response.slides : [];
   const m = /^slide:(\d+)$/.exec(ip.target);
   const slide = m ? slides.find((s) => String(s.index) === m[1]) : slides[0];
+  const tmplMd = ip.template ? await readMd(`visual/templates/${slugify(ip.template)}.md`) : "";
+  const estiloMd = ip.estilo ? await readMd(`visual/estilos/${slugify(ip.estilo)}.md`) : "";
   const userPrompt = [
     "Você é o image-prompt-writer. Leia os arquivos design_system.md e brand_bible.md (na raiz do projeto) e gere UM prompt de imagem em português do Brasil para a peça abaixo.",
     `Marca: ${response.brand}. Formato: ${response.format} (aspecto: ${ip.aspect}).`,
-    `Template visual desejado: "${ip.template ?? ""}".`,
-    `Estilo/paleta visual desejado: "${ip.estilo ?? "Claro"}" — "Claro" = fundo claro/off-white; "Azul escuro" = fundo azul-escuro; "Verde Escuro" = fundo verde/teal escuro. Aplique ao fundo e à paleta, mantendo legibilidade.`,
+    `Template visual: "${ip.template ?? ""}". Estilo visual: "${ip.estilo ?? ""}".`,
+    tmplMd && `\nREGRAS DO TEMPLATE (layout — disposição de texto/imagem/botões; siga à risca):\n${tmplMd}`,
+    estiloMd && `\nREGRAS DO ESTILO (cores de fundo/botões/texto, overlays/transparências; siga à risca):\n${estiloMd}`,
     slide
-      ? `Conteúdo da peça: título "${slide.title}", texto "${slide.body ?? ""}".`
-      : `Tema da peça: ${response.theme}.`,
+      ? `\nConteúdo da peça: título "${slide.title}", texto "${slide.body ?? ""}".`
+      : `\nTema da peça: ${response.theme}.`,
     `Tema do post: ${response.theme}. Ângulo: ${response.angle}.`,
-    "Regras: respeite a paleta, a tipografia, o estilo de imagem e a safe area do design system; alinhe ao template visual indicado; NÃO embuta texto na imagem (o texto é renderizado por cima); ponto focal claro; coerente com a marca.",
+    "Regras gerais: respeite design_system/brand_bible (paleta, tipografia, estilo de imagem, safe area); combine o LAYOUT do template com as CORES do estilo; NÃO embuta texto na imagem (o texto é renderizado por cima); ponto focal claro; coerente com a marca.",
     'Responda APENAS com um objeto JSON: {"prompt": "<descrição visual rica em português>", "negative": "<o que evitar>"}',
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
   const out = await runClaudeJson(userPrompt, { allowedTools: ["Read"], label: `prompt ${ip.target}` });
   ip.prompt = String(out.prompt ?? "").trim();
   if (out.negative) ip.negative = String(out.negative).trim();
