@@ -1,29 +1,42 @@
 # Estilo: Azul escuro
 
-Cores, fundo, texto e fonte (o **template** define o layout). Referência visual:
-peça de citação com fundo azul-marinho ("A crença mais comum…").
+Cores, fundo, texto, fonte e acabamento (o **template** define o layout).
+Referências: peças de fundo azul-marinho ("A crença mais comum…", "Você contratou…",
+"Feriado na quinta…").
 
 > **Nota:** o Guia Visual (CSS) **não** define um azul-marinho — o fundo escuro
-> oficial é o verde `#083A36`. Este estilo usa um **azul-marinho escuro derivado da
-> imagem de referência** como variação de autoridade. Ajuste o hex se a marca
+> oficial é o verde `#083A36`. Este estilo usa um **azul-marinho escuro derivado das
+> imagens de referência** como variação de autoridade. Ajuste o hex se a marca
 > formalizar um token oficial.
 
 ## Fonte
 - **Proxima Nova.** Corpo `400`; títulos `700` (line-height curto); botões negrito.
 
 ## Cores
-- **Fundo:** azul-marinho escuro `#0A1F33` (aprox. da referência).
+- **Fundo:** azul-marinho escuro `#0A1F33` (aprox. da referência); pode ter leve
+  variação de tom (mais claro no topo, mais escuro na base).
 - **Título:** branco `#FFFFFF` (peso `700`). **Corpo:** off-white `#F5F7FA` /
   cinza claro `#CBD2D9`.
 - **Destaque / palavra-chave / aspas / ícones:** verde claro `#1CD8C7`.
+- **Eyebrow / rótulo** (caixa alta): verde claro `#1CD8C7`.
 - **Linhas / divisores:** finos, em `#1CD8C7` ou branco a baixa opacidade (~20–30%).
 
 ## Botão / CTA
-- **Botão claro:** fundo branco, texto escuro `#1F2933`, negrito, cantos
-  arredondados ~`6px`; ou contornado em `#1CD8C7` sobre o navy.
+- **Botão claro:** fundo branco, texto escuro `#1F2933`, negrito, cantos arredondados
+  (~`6px`+); **ou** contornado em `#1CD8C7` sobre o navy.
+- **Selo de seta:** círculo contornado em `#1CD8C7` com seta, ao lado da linha de
+  destaque.
+
+## Elementos de destaque
+- **Aspas** grandes em `#1CD8C7` em peças de citação.
+- **Bloco/box** de afirmação com **contorno** `#1CD8C7` (destaque "boxed").
+
+## Decoração
+- **Formas/curvas** sutis e pontilhados a baixa opacidade ao fundo.
 
 ## Imagem / transparências
-- Quando houver texto sobre foto: véu **azul-marinho `#0A1F33` translúcido ~55–70%**.
+- Quando houver texto sobre foto: **véu azul-marinho `#0A1F33` translúcido ~55–70%**;
+  fotos podem ter duotone azul-marinho para integrar.
 
 ## Sensação
 - Autoridade, foco, sobriedade. Navy como base, teal `#1CD8C7` como destaque,
