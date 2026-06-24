@@ -135,6 +135,7 @@ async function generatePromptFor(response, ip) {
     "Você é o image-prompt-writer. Leia os arquivos design_system.md e brand_bible.md (na raiz do projeto) e gere UM prompt de imagem em português do Brasil para a peça abaixo.",
     `Marca: ${response.brand}. Formato: ${response.format} (aspecto: ${ip.aspect}).`,
     `Template visual desejado: "${ip.template ?? ""}".`,
+    `Estilo/paleta visual desejado: "${ip.estilo ?? "Claro"}" — "Claro" = fundo claro/off-white; "Azul escuro" = fundo azul-escuro; "Verde Escuro" = fundo verde/teal escuro. Aplique ao fundo e à paleta, mantendo legibilidade.`,
     slide
       ? `Conteúdo da peça: título "${slide.title}", texto "${slide.body ?? ""}".`
       : `Tema da peça: ${response.theme}.`,

@@ -11,6 +11,7 @@ import {
 } from "../data/jobs";
 import { addImage, imagesByIds } from "../data/imageBank";
 import { useLookups } from "../data/lookups";
+import { ESTILOS } from "../types";
 import ReferenceImages from "./ReferenceImages";
 
 const STEPS: JobStatus[] = ["pending", "processing", "done"];
@@ -344,6 +345,21 @@ export default function JobResult({ jobId }: { jobId: string }) {
                         {lookups.templates.map((t) => (
                           <option key={t.id} value={t.label}>
                             {t.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="field">
+                      <span>Estilo</span>
+                      <select
+                        value={p.estilo ?? ""}
+                        disabled={requesting}
+                        onChange={(e) => patchPrompt(i, { estilo: e.target.value || undefined })}
+                      >
+                        <option value="">— selecione —</option>
+                        {ESTILOS.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
                           </option>
                         ))}
                       </select>

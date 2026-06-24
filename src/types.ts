@@ -95,10 +95,14 @@ export const CREATIVE_FORMATS: CreativeFormat[] = [
   { id: "4_5", label: "4:5 (Feed)", safeguard: "feed_4_5", w: 1080, h: 1350 },
 ];
 
+// Estilo visual (paleta/fundo) aplicado à imagem — fixo por enquanto.
+export const ESTILOS = ["Claro", "Azul escuro", "Verde Escuro"] as const;
+
 export interface Creative {
   id: string;
   formatId: string; // CREATIVE_FORMATS.id
   prompt: string;
+  estilo?: string; // ESTILOS
   referenceImageIds: string[]; // imagens do banco enviadas no payload da OpenAI
   createdBy?: string; // e-mail de quem criou (criativos são compartilhados)
   status: CreativeStatus;

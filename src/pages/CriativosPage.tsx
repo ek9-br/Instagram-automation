@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CREATIVE_FORMATS, creativeFormatOf, INSTAGRAM_SAFEZONES } from "../types";
+import { CREATIVE_FORMATS, ESTILOS, creativeFormatOf, INSTAGRAM_SAFEZONES } from "../types";
 import type { Creative, CreativeStatus, SafezoneSpec } from "../types";
 import {
   deleteCreative,
@@ -81,7 +81,10 @@ export default function CriativosPage() {
     upsertCreative(cur);
     try {
       const references = imagesByIds(c.referenceImageIds ?? []).map((b) => b.url);
-      const { url: raw } = await generateImageFromPrompt(c.prompt, "portrait", references);
+      const fullPrompt = c.estilo
+        ? `${c.prompt}\n\nEstilo/paleta visual: ${c.estilo} (Claro = fundo claro/off-white; Azul escuro = fundo azul-escuro; Verde Escuro = fundo verde/teal escuro).`
+        : c.prompt;
+      const { url: raw } = await generateImageFromPrompt(fullPrompt, "portrait", references);
       upsertCreative({ ...cur, status: "idle", rawUrl: raw });
     } catch (e) {
       upsertCreative({ ...cur, status: "error", error: msg(e) });
@@ -200,6 +203,19 @@ export default function CriativosPage() {
                     {CREATIVE_FORMATS.map((f) => (
                       <option key={f.id} value={f.id}>
                         {f.label}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    style={{ marginTop: 6, display: "block", width: "100%" }}
+                    value={c.estilo ?? ""}
+                    disabled={busy(c)}
+                    onChange={(e) => patch(c, { estilo: e.target.value || undefined })}
+                  >
+                    <option value="">Estilo — selecione</option>
+                    {ESTILOS.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
                       </option>
                     ))}
                   </select>

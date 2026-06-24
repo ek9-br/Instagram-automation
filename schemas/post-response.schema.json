@@ -100,6 +100,10 @@
             "type": "string",
             "description": "Template visual escolhido para esta peça (label da tabela de lookup templates)."
           },
+          "estilo": {
+            "type": "string",
+            "description": "Estilo/paleta visual da peça (ex.: Claro, Azul escuro, Verde Escuro)."
+          },
           "prompt_status": {
             "type": "string",
             "enum": ["idle", "requested", "done", "error"],

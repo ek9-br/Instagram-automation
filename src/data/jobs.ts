@@ -50,6 +50,7 @@ export interface PostResponseImagePrompt {
   label?: string;
   prompt: string;
   template?: string; // template visual escolhido para a peça
+  estilo?: string; // estilo/paleta visual (Claro / Azul escuro / Verde Escuro)
   prompt_status?: "idle" | "requested" | "done" | "error";
   aspect: string;
   negative?: string;
