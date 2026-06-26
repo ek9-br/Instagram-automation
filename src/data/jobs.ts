@@ -162,10 +162,11 @@ export async function applySafeGuard(url: string, format: string): Promise<{ url
 export async function generateImageFromPrompt(
   prompt: string,
   aspect: string,
-  references: string[] = []
+  references: string[] = [],
+  negative = ""
 ): Promise<{ url: string }> {
   const { data, error } = await supabase.functions.invoke("generate-image", {
-    body: { prompt, aspect, references },
+    body: { prompt, aspect, references, negative },
   });
   if (error) throw new Error(error.message);
   if (data?.error) throw new Error(data.error);

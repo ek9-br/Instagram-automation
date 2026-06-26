@@ -6,7 +6,7 @@ export const DEFAULT_FN = (base) =>
   `${String(base).replace(/\/$/, "")}/functions/v1/generate-image`;
 
 // Gera uma imagem a partir de um prompt. Devolve { url, path, model, size }.
-export async function generateImage({ prompt, aspect }, { url, key, timeoutMs = 120_000 }) {
+export async function generateImage({ prompt, aspect, negative = "" }, { url, key, timeoutMs = 120_000 }) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
@@ -19,7 +19,7 @@ export async function generateImage({ prompt, aspect }, { url, key, timeoutMs = 
       },
       // `references` da response são descrições textuais, não URLs — não as
       // repassamos como imagens de referência (a function tentaria baixá-las).
-      body: JSON.stringify({ prompt, aspect, references: [] }),
+      body: JSON.stringify({ prompt, aspect, negative, references: [] }),
       signal: ctrl.signal,
     });
     const data = await res.json().catch(() => ({}));
@@ -41,7 +41,7 @@ export async function attachImages(response, { fnUrl, key, log = () => {} }) {
     const p = prompts[i];
     try {
       log(`  🖼  imagem ${i + 1}/${prompts.length} (${p.target})...`);
-      const out = await generateImage({ prompt: p.prompt, aspect: p.aspect }, { url: fnUrl, key });
+      const out = await generateImage({ prompt: p.prompt, aspect: p.aspect, negative: p.negative }, { url: fnUrl, key });
       p.image_url = out.url;
       if (out.path) p.image_path = out.path;
       ok++;

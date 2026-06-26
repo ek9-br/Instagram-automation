@@ -210,13 +210,13 @@ export default function JobResult({ jobId }: { jobId: string }) {
     }
   }
 
-  async function gerarImagem(idx: number, prompt: string, aspect: string) {
+  async function gerarImagem(idx: number, prompt: string, aspect: string, negative = "") {
     if (!draft) return;
     setBusyIdx(idx);
     setErrByIdx((e) => ({ ...e, [idx]: "" }));
     try {
       const references = imagesByIds(refsByIdx[idx] ?? []).map((b) => b.url);
-      const { url } = await generateImageFromPrompt(prompt, aspect, references);
+      const { url } = await generateImageFromPrompt(prompt, aspect, references, negative);
       addImage(url, `${draft.theme} · imagem ${idx + 1}`, "gerada");
       setImgByIdx((m) => ({ ...m, [idx]: url }));
     } catch (e) {
@@ -484,7 +484,7 @@ export default function JobResult({ jobId }: { jobId: string }) {
                         className="btn primary small"
                         disabled={!hasPrompt || busyIdx !== null}
                         title={!hasPrompt ? "Gere o prompt antes de gerar a imagem" : undefined}
-                        onClick={() => void gerarImagem(i, p.prompt, p.aspect)}
+                        onClick={() => void gerarImagem(i, p.prompt, p.aspect, p.negative)}
                       >
                         {busyIdx === i ? "Gerando…" : hasImage ? "Gerar nova versão" : "Gerar imagem"}
                       </button>

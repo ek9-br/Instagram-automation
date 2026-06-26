@@ -255,7 +255,7 @@ async function applyImageRevision(resp, ip) {
   await generatePromptFor(resp, ip, { revision: ip.revision });
   if (ip.prompt_status !== "done") throw new Error("falha ao regerar o prompt");
   if (IMAGE_FN_URL) {
-    const out = await generateImage({ prompt: ip.prompt, aspect: ip.aspect }, { url: IMAGE_FN_URL, key: KEY });
+    const out = await generateImage({ prompt: ip.prompt, aspect: ip.aspect, negative: ip.negative }, { url: IMAGE_FN_URL, key: KEY });
     ip.image_url = out.url;
     if (out.path) ip.image_path = out.path;
   }

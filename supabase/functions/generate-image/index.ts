@@ -37,6 +37,7 @@ interface RequestBody {
   prompt: string;
   aspect?: "square" | "portrait" | "landscape";
   references?: string[]; // URLs de imagens de referência
+  negative?: string; // o que evitar — dobrado no prompt (a API não tem negative_prompt)
 }
 
 Deno.serve(async (req) => {
@@ -50,8 +51,14 @@ Deno.serve(async (req) => {
   try {
     if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY não configurada (supabase secrets set)");
 
-    const { prompt, aspect = "square", references = [] } = (await req.json()) as RequestBody;
+    const { prompt, aspect = "square", references = [], negative = "" } =
+      (await req.json()) as RequestBody;
     if (!prompt || !prompt.trim()) return json({ error: "prompt é obrigatório" }, 400);
+
+    // A API de imagens da OpenAI não tem negative_prompt — dobramos no prompt.
+    const finalPrompt = negative && negative.trim()
+      ? `${prompt}\n\nEVITE / NÃO inclua na imagem: ${negative.trim()}`
+      : prompt;
 
     const size = sizeFor(aspect);
     let b64: string | undefined;
@@ -60,7 +67,7 @@ Deno.serve(async (req) => {
       // Com referências → endpoint /images/edits (multipart, aceita várias imagens).
       const form = new FormData();
       form.append("model", MODEL);
-      form.append("prompt", prompt);
+      form.append("prompt", finalPrompt);
       form.append("size", size);
       for (let i = 0; i < references.length; i++) {
         const r = await fetch(references[i]);
@@ -84,7 +91,7 @@ Deno.serve(async (req) => {
           Authorization: `Bearer ${OPENAI_API_KEY}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ model: MODEL, prompt, size, n: 1 }),
+        body: JSON.stringify({ model: MODEL, prompt: finalPrompt, size, n: 1 }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error?.message ?? "Erro OpenAI (generations)");
