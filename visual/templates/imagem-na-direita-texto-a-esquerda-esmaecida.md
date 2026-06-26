@@ -20,7 +20,9 @@ O visual nunca compete com o texto.
 4. **Conteúdo principal:** subtítulo/parágrafo; e/ou **lista de destaques** (3–4
    itens com ícone em selo); e/ou **checklist** (itens com ✓).
 5. **Linha de fechamento / destaque** (frase de impacto), normalmente após divisor.
-6. **CTA** (opcional): botão/pílula com ícone + texto + seta.
+6. **CTA / botão** (opcional): botão/pílula com ícone + texto + seta — **só desenhe
+   se houver texto de CTA na copy fornecida** (ex.: "Teste grátis"); **sem** texto de
+   CTA, **não** desenhe botão algum.
 7. **Logo** no rodapé (canto inferior-esquerdo ou centralizado).
 
 ## Visual esmaecido (à direita / ao fundo)

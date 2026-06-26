@@ -14,7 +14,9 @@ recebe **todo o texto**, sobreposto. Imagem única com texto por cima (sem colun
 1. **Headline / blocos de texto** no terço **superior-direito**. Pode ser um título
    único ou **vários blocos curtos empilhados**, separados por **divisores**.
 2. **Linha de destaque / fechamento**, abaixo dos blocos (pode ter **seta (→)** num selo).
-3. **CTA** (opcional): botão na base-direita.
+3. **CTA / botão** (opcional): botão na base-direita — **só desenhe se houver texto
+   de CTA na copy fornecida** (ex.: "Teste grátis"); **sem** texto de CTA, **não**
+   desenhe botão algum.
 4. **Rodapé:** **logo** no canto **inferior-direito**; **tagline secundária** opcional
    no canto **inferior-esquerdo**.
 

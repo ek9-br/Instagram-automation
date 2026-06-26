@@ -18,7 +18,9 @@ ao fundo como profundidade/atmosfera), nunca competindo com o texto.
 4. **Conteúdo principal:** parágrafo; e/ou **lista** (itens com ícone, podendo usar
    marcador de barra vertical); e/ou **checklist** (✓).
 5. **Linha de fechamento / destaque** (opcional, após divisor).
-6. **CTA** (opcional): botão com ícone + texto + seta.
+6. **CTA / botão** (opcional): botão com ícone + texto + seta — **só desenhe se
+   houver texto de CTA na copy fornecida** (ex.: "Teste grátis"); **sem** texto de
+   CTA, **não** desenhe botão algum.
 7. **Logo** no rodapé.
 
 ## Visual esmaecido (à esquerda / ao fundo)

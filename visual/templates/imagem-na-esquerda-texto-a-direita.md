@@ -31,7 +31,9 @@ decorativas e pontilhados opcionais ao fundo. Visual em **primeiro plano / níti
    Os itens podem usar **marcador de barra vertical** à esquerda de cada um, com
    **título em negrito + descrição** (1–2 linhas).
 6. **Linha de fechamento / destaque** (opcional, precedida de divisor).
-7. **CTA** (opcional): botão com ícone + texto + seta.
+7. **CTA / botão** (opcional): botão com ícone + texto + seta — **só desenhe se
+   houver texto de CTA na copy fornecida** (ex.: "Teste grátis"); **sem** texto de
+   CTA, **não** desenhe botão algum.
 
 ## Regras de disposição
 - Texto consistente no **lado direito**, com margem segura da borda.

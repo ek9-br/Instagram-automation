@@ -166,6 +166,7 @@ async function generatePromptFor(response, ip, { revision } = {}) {
     revision &&
       `\nCOMENTÁRIO DE REVISÃO DO HUMANO (prioritário — ajuste o prompt para atender):\n"""\n${revision}\n"""`,
     "Regras gerais: o prompt DEVE instruir a IA de imagem a RENDERIZAR o texto acima DENTRO da imagem (o texto faz parte da arte), posicionado conforme o LAYOUT do template e com a tipografia/cores do ESTILO. Use exatamente o texto fornecido — sem inventar, traduzir ou acrescentar palavras. Respeite design_system/brand_bible (paleta, tipografia, safe area); ponto focal claro; coerente com a marca.",
+    "BOTÃO/CTA é OPCIONAL: NÃO desenhe nenhum botão (ex.: \"Teste grátis\") a menos que haja um texto de CTA explícito na copy acima. Se não houver texto de CTA, a peça NÃO deve ter botão algum.",
     'Responda APENAS com um objeto JSON: {"prompt": "<descrição visual rica em português, dizendo qual texto renderizar e onde>", "negative": "<o que evitar, ex.: texto cortado, erros de ortografia, palavras trocadas>"}',
   ]
     .filter(Boolean)

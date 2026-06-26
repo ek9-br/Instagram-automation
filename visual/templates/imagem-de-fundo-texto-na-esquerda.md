@@ -24,7 +24,9 @@ esquerda. Sem divisão em colunas — é uma imagem única com o texto por cima.
    com marcador **✓** à esquerda (título + 1–2 linhas), tipicamente entre divisores.
 4. **Linha de destaque / fechamento** (frase de impacto), abaixo dos blocos. Pode
    vir acompanhada de um **ícone de seta (→) em um selo** à esquerda da frase.
-5. **CTA** (opcional): botão na base-esquerda, se a peça pedir.
+5. **CTA / botão** (opcional): botão na base-esquerda — **só desenhe se houver texto
+   de CTA na copy fornecida** (ex.: "Teste grátis"); **sem** texto de CTA, **não**
+   desenhe botão algum.
 6. **Rodapé:**
    - **Logo** da marca no canto **inferior-esquerdo** (ou centralizado).
    - **Tagline/assinatura secundária** (opcional, 1–2 linhas curtas) no canto

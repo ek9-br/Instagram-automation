@@ -21,7 +21,8 @@ discretas** da marca. O **texto é o protagonista**, ocupando a maior parte da p
    com contorno** (ex.: "O DETALHE MUDA TUDO."), eventualmente com ícone à esquerda.
 5. **Fileira de ícones** (opcional): 2–3 ícones em selo, em linha, **separados por
    divisores verticais**, como apoio visual ao texto (não é lista com descrição).
-6. **CTA** (opcional): botão, se a peça pedir conversão.
+6. **CTA / botão** (opcional): **só desenhe se houver texto de CTA na copy fornecida**
+   (ex.: "Teste grátis"); **sem** texto de CTA, **não** desenhe botão algum.
 7. **Logo** da marca (rodapé — centralizado ou em um canto).
 
 ## Alinhamento

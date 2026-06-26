@@ -24,8 +24,9 @@ Tudo alinhado ao **centro** (não há colunas laterais).
 4. **Headline** na parte inferior, **centralizado**, em várias linhas (frase de
    destaque, podendo ter uma linha/palavra de ênfase).
 5. **Divisor** curto centralizado no rodapé.
-6. **CTA** (opcional): se houver, centralizado abaixo do headline. Nesta referência
-   não há botão.
+6. **CTA / botão** (opcional): centralizado abaixo do headline — **só desenhe se
+   houver texto de CTA na copy fornecida** (ex.: "Teste grátis"); **sem** texto de
+   CTA, **não** desenhe botão algum (nesta referência não há botão).
 
 ## Regras de disposição
 - **Tudo centralizado** no eixo vertical da peça.

@@ -58,12 +58,13 @@ para não poluir.
 
 ## 6. CTA
 
-- Sempre presente em peças de feed, stories e ads (no último slide, no caso de
-  carrossel).
+- O CTA como **copy** costuma aparecer no último slide (carrossel) / na legenda.
 - Verbo no imperativo + benefício claro (ex.: "Salve este post", "Arraste para
   ver", "Toque no link").
-- Destaque por botão, pílula ou cor de marca — sem competir com a headline.
-- Um único CTA por peça.
+- **Botão/pílula de CTA na imagem é OPCIONAL**: só renderize um botão (ex.: "Teste
+  grátis") quando houver texto de CTA na copy daquela peça; sem texto de CTA, **não**
+  desenhe botão algum. Quando houver, destaque sem competir com a headline.
+- No máximo um CTA por peça.
 
 ## 7. Cor e composição (diretrizes)
 

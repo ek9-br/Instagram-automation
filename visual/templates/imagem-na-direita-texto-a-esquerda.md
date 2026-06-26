@@ -33,7 +33,9 @@ O visual da direita nunca cobre o texto da esquerda.
      ícone de status + título + 1–2 linhas.
 6. **Linha de fechamento / destaque** (frase de impacto), abaixo do conteúdo,
    normalmente precedida por um **divisor**.
-7. **CTA** (opcional): botão/pílula com ícone + texto + seta.
+7. **CTA / botão** (opcional): botão/pílula com ícone + texto + seta — **só desenhe
+   se houver texto de CTA na copy fornecida** (ex.: "Teste grátis"); **sem** texto de
+   CTA, **não** desenhe botão algum.
 8. **Logo** no canto **inferior-esquerdo** (quando não estiver no topo).
 
 ## Coluna direita — composição

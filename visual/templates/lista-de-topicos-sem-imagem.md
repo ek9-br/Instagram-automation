@@ -22,7 +22,8 @@ texto" (citação/afirmação) e de "Grade de destaques (2x2)" (grade + header c
    - Itens **separados por divisores** horizontais (opcional).
 3. **Linha de destaque / fechamento** (frase de impacto), abaixo da lista — ex.:
    "Funcionava. Até parar de funcionar.". Pode ter 2 linhas.
-4. **CTA** (opcional): botão, se a peça pedir conversão.
+4. **CTA / botão** (opcional): **só desenhe se houver texto de CTA na copy fornecida**
+   (ex.: "Teste grátis"); **sem** texto de CTA, **não** desenhe botão algum.
 5. **Logo** da marca no rodapé (canto ou centralizado).
 
 ## Alinhamento
