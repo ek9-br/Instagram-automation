@@ -148,7 +148,7 @@ async function readMd(rel) {
 async function generatePromptFor(response, ip, { revision } = {}) {
   const slides = Array.isArray(response.slides) ? response.slides : [];
   const m = /^slide:(\d+)$/.exec(ip.target);
-  const slide = m ? slides.find((s) => String(s.index) === m[1]) : slides[0];
+  const slide = (m ? slides.find((s) => String(s.index) === m[1]) : slides[0]) || slides[0];
   const tmplMd = ip.template ? await readMd(`visual/templates/${slugify(ip.template)}.md`) : "";
   const estiloMd = ip.estilo ? await readMd(`visual/estilos/${slugify(ip.estilo)}.md`) : "";
   // Texto que DEVE aparecer renderizado na imagem (copy da peça).
@@ -171,7 +171,22 @@ async function generatePromptFor(response, ip, { revision } = {}) {
     .filter(Boolean)
     .join("\n");
   const out = await runClaudeJson(userPrompt, { allowedTools: ["Read"], label: `prompt ${ip.target}` });
-  ip.prompt = String(out.prompt ?? "").trim();
+  let prompt = String(out.prompt ?? "").trim();
+  // Garante DETERMINISTICAMENTE que o texto planejado esteja no prompt da imagem
+  // (não depende de a Claude tê-lo ecoado). Acrescenta o bloco verbatim no fim.
+  if (textoImagem && prompt) {
+    const jaContem = textoImagem
+      .split(/\n+/)
+      .map((l) => l.trim())
+      .filter(Boolean)
+      .every((l) => prompt.includes(l));
+    if (!jaContem) {
+      prompt +=
+        `\n\nTEXTO A RENDERIZAR NA IMAGEM (reproduza EXATAMENTE, sem alterar, traduzir, ` +
+        `abreviar ou trocar palavras; respeite as quebras de linha):\n${textoImagem}`;
+    }
+  }
+  ip.prompt = prompt;
   if (out.negative) ip.negative = String(out.negative).trim();
   ip.prompt_status = ip.prompt ? "done" : "error";
 }
