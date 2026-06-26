@@ -4,6 +4,13 @@
 export type PostTipo = "post" | "carrossel" | "criativo";
 export type PostStatus = "ideia" | "texto_gerado" | "pronto";
 
+// Proporção da arte para posts/carrosséis.
+export type Proporcao = "3_4" | "1_1";
+export const PROPORCOES: { id: Proporcao; label: string }[] = [
+  { id: "3_4", label: "3:4 (1080×1440)" },
+  { id: "1_1", label: "1:1 (1080×1080)" },
+];
+
 export interface Option {
   id: string;
   label: string;
@@ -46,6 +53,7 @@ export interface Post {
   ctaId: string | null;
   legendaId: string | null;
   templateId: string | null;
+  proporcao?: Proporcao; // proporção da arte (post/carrossel); default "3_4"
   slidesCount: number; // usado apenas quando tipo === "carrossel"
   status: PostStatus;
   jobId: string | null; // job criado na fila (create-job), quando houver

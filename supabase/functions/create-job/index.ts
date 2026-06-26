@@ -20,17 +20,20 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
-// tipo do front  →  format do contrato (post-request.schema.json)
-const FORMAT_BY_TIPO: Record<string, string> = {
-  post: "post_feed_3x4",
-  carrossel: "carousel_3x4",
-  criativo: "ads_landscape_1_91_1",
-};
+// tipo (+ proporção, p/ post e carrossel) → format do contrato (post-request.schema.json)
+function formatFor(tipo: string, proporcao?: string): string | undefined {
+  const p = proporcao === "1_1" ? "1x1" : "3x4";
+  if (tipo === "post") return `post_feed_${p}`;
+  if (tipo === "carrossel") return `carousel_${p}`;
+  if (tipo === "criativo") return "ads_landscape_1_91_1";
+  return undefined;
+}
 
 const OBJECTIVES = ["awareness", "engagement", "conversion", "education", "retention"];
 
 interface CreateJobBody {
   tipo: string; // post | carrossel | criativo
+  proporcao?: string; // "3_4" (default) | "1_1" — só post/carrossel
   tema: string;
   brand?: string;
   audience?: string;
@@ -55,7 +58,7 @@ Deno.serve(async (req) => {
     const tema = (body.tema ?? "").trim();
     if (!tema) return json({ error: "tema é obrigatório" }, 400);
 
-    const format = FORMAT_BY_TIPO[tipo];
+    const format = formatFor(tipo, body.proporcao);
     if (!format) {
       return json({ error: `tipo inválido: ${tipo} (use post | carrossel | criativo)` }, 400);
     }

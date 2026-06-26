@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { deletePost, newPostId, upsertPost, usePosts } from "../store";
-import type { Option, Post, PostStatus, PostTipo } from "../types";
-import { STATUS_LABELS, TIPO_LABELS } from "../types";
+import type { Option, Post, PostStatus, PostTipo, Proporcao } from "../types";
+import { PROPORCOES, STATUS_LABELS, TIPO_LABELS } from "../types";
 import { useLookups } from "../data/lookups";
 import { createJob, fetchJob, JOB_STATUS_LABELS, type JobStatus } from "../data/jobs";
 import { useAuth } from "../auth/AuthContext";
@@ -17,6 +17,7 @@ function emptyPost(): Post {
     ctaId: null,
     legendaId: null,
     templateId: null,
+    proporcao: "3_4",
     slidesCount: 3,
     status: "ideia",
     jobId: null,
@@ -135,6 +136,7 @@ export default function PostsPage() {
     try {
       const { job_id } = await createJob({
         tipo: post.tipo,
+        proporcao: post.proporcao ?? "3_4",
         tema: post.tema,
         slides_count: post.slidesCount,
         sentimento_ids: post.sentimentoIds,
@@ -179,6 +181,7 @@ export default function PostsPage() {
             <tr>
               <th>Tipo</th>
               <th>Slides</th>
+              <th>Proporção</th>
               <th>Tema</th>
               <th>Sentimento</th>
               <th>Ângulo</th>
@@ -191,7 +194,7 @@ export default function PostsPage() {
           <tbody>
             {posts.length === 0 && (
               <tr>
-                <td colSpan={9} className="empty">
+                <td colSpan={10} className="empty">
                   Nenhum post ainda. Clique em "+ Nova linha".
                 </td>
               </tr>
@@ -231,6 +234,22 @@ export default function PostsPage() {
                     />
                   ) : (
                     <span className="muted">—</span>
+                  )}
+                </td>
+                <td>
+                  {post.tipo === "criativo" ? (
+                    <span className="muted">—</span>
+                  ) : (
+                    <select
+                      value={post.proporcao ?? "3_4"}
+                      onChange={(e) => patch(post, { proporcao: e.target.value as Proporcao })}
+                    >
+                      {PROPORCOES.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.label}
+                        </option>
+                      ))}
+                    </select>
                   )}
                 </td>
                 <td>

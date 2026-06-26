@@ -10,6 +10,7 @@ const STAGES = ["post-strategist", "carousel-writer", "reviewer"];
 
 function aspectOf(format) {
   if (format === "ads_landscape_1_91_1") return "landscape";
+  if (format === "post_feed_1x1" || format === "carousel_1x1") return "square";
   return "portrait";
 }
 
@@ -66,9 +67,9 @@ const META_FORMATS = [
 export function runMockPipeline(request, tipo) {
   const { job_id, brand = "Acme", format, briefing = "", audience } = request;
   const theme = (briefing.split(".")[0] || briefing || "Tema").trim();
-  const isCarousel = format === "carousel_3x4";
+  const isCarousel = String(format).startsWith("carousel");
   const isCreative = tipo === "criativo";
-  const aspect = format === "ads_landscape_1_91_1" ? "landscape" : "portrait";
+  const aspect = aspectOf(format);
   const safe_area =
     format === "stories_9x16" || format === "reels_cover_9x16"
       ? { top_pct: 14, bottom_pct: 18, side_pct: 8 }

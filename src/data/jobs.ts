@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 // Payload enviado à edge function create-job (selects do front).
 export interface CreateJobPayload {
   tipo: string; // post | carrossel | criativo
+  proporcao?: string; // "3_4" (default) | "1_1" — só post/carrossel
   tema: string;
   slides_count?: number;
   sentimento_ids: string[];

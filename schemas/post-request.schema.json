@@ -22,7 +22,9 @@
       "description": "Formato da peça.",
       "enum": [
         "post_feed_3x4",
+        "post_feed_1x1",
         "carousel_3x4",
+        "carousel_1x1",
         "stories_9x16",
         "reels_cover_9x16",
         "ads_landscape_1_91_1"
