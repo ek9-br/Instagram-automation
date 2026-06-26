@@ -39,5 +39,6 @@ decorativas e pontilhados opcionais ao fundo. Visual em **primeiro plano / níti
 - Hierarquia: eyebrow < headline > conteúdo > fechamento (> CTA).
 - O visual da esquerda **não invade** a área de texto.
 - Respeitar **safe area** (salvo o visual que sangra à esquerda).
-- A **foto/IA não traz texto embutido** — gera só pessoa, mockup e formas (os
-  elementos 3D e a UI do mockup fazem parte da arte, não do copy).
+- A **IA renderiza o texto NA imagem** (o texto faz parte da arte), na disposição
+  acima; use **exatamente** o texto fornecido (sem inventar, traduzir ou trocar
+  palavras), além de gerar pessoa, mockup e formas (incluindo elementos 3D e a UI).

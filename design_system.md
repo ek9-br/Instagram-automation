@@ -81,6 +81,7 @@ para não poluir.
 - Evitar mais de 3 cores dominantes por peça.
 - Imagens devem ter ponto focal claro e respeitar a *safe area*.
 
-> Os `image_prompts` gerados devem mencionar explicitamente proporção, espaço
-> reservado para texto (safe area) e ausência de texto embutido quando o texto
-> for renderizado por cima (para não duplicar com a tipografia da arte).
+> Os `image_prompts` gerados devem mencionar explicitamente proporção e **renderizar
+> o texto da peça DENTRO da imagem** (o texto faz parte da arte), na disposição do
+> template e com a tipografia/cores do estilo. Usar **exatamente** o texto fornecido
+> (sem inventar, traduzir ou trocar palavras) e respeitar a *safe area*.

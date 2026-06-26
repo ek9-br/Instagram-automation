@@ -52,6 +52,10 @@ export interface PostResponseImagePrompt {
   template?: string; // template visual escolhido para a peça
   estilo?: string; // estilo/paleta visual (Claro / Azul escuro / Verde Escuro)
   prompt_status?: "idle" | "requested" | "done" | "error";
+  // Revisão: comentário do humano → worker gera novo prompt + nova imagem.
+  revision?: string;
+  revision_status?: "idle" | "requested" | "done" | "error";
+  revision_note?: string; // o que a revisão aprendeu/alterou (template/estilo)
   aspect: string;
   negative?: string;
   references?: string[];

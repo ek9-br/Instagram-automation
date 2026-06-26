@@ -109,6 +109,19 @@
             "enum": ["idle", "requested", "done", "error"],
             "description": "Estado da geração do prompt sob demanda."
           },
+          "revision": {
+            "type": "string",
+            "description": "Comentário do humano revisando a imagem; o worker o usa para gerar um novo prompt e uma nova imagem."
+          },
+          "revision_status": {
+            "type": "string",
+            "enum": ["idle", "requested", "done", "error"],
+            "description": "Estado da revisão sob demanda (regerar prompt+imagem a partir do comentário)."
+          },
+          "revision_note": {
+            "type": "string",
+            "description": "Resumo do que a revisão aprendeu/alterou (ex.: regras de template/estilo atualizadas)."
+          },
           "aspect": {
             "type": "string",
             "enum": ["square", "portrait", "landscape"]

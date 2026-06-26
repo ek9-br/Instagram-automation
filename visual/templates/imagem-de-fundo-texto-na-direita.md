@@ -30,4 +30,6 @@ recebe **todo o texto**, sobreposto. Imagem única com texto por cima (sem colun
 - O sujeito **não invade** a área de texto à direita.
 - Hierarquia: headline/blocos > destaque (> CTA).
 - Respeitar **safe area**; nada crítico nas bordas.
-- A **foto/IA não traz texto embutido** — o texto do layout é renderizado por cima.
+- A **IA renderiza o texto NA imagem** (o texto faz parte da arte), na disposição
+  acima; use **exatamente** o texto fornecido (sem inventar, traduzir ou trocar
+  palavras), além de gerar a cena/pessoa.

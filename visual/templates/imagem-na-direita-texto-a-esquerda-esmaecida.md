@@ -36,5 +36,6 @@ O visual nunca compete com o texto.
 - O visual esmaecido **não compete** com o texto (fica como profundidade).
 - Hierarquia: (eyebrow/ordinal <) headline > conteúdo > fechamento (> CTA).
 - Respeitar **safe area**; nada crítico nas bordas (salvo o visual que sangra).
-- O **texto do layout** é renderizado por cima na arte — a **foto/IA não traz texto,
-  letras ou números embutidos**; gera apenas o mockup/ilustração/objeto e as formas.
+- A **IA renderiza o texto NA imagem** (o texto faz parte da arte), na disposição
+  acima; use **exatamente** o texto fornecido (sem inventar, traduzir ou trocar
+  palavras), além de gerar o mockup/ilustração/objeto esmaecido e as formas.

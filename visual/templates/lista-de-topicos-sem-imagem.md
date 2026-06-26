@@ -34,5 +34,6 @@ texto" (citação/afirmação) e de "Grade de destaques (2x2)" (grade + header c
 - Itens com **estrutura uniforme** (mesmo tamanho de selo, mesmo espaçamento).
 - Hierarquia: eyebrow < itens (título > descrição) > fechamento (> CTA).
 - Bastante respiro entre itens; **safe area** respeitada.
-- Todo o texto é parte do layout (renderizado na arte); a IA gera apenas **ícones e
-  formas**, **não** texto/letras/números embutidos.
+- A **IA renderiza o texto NA imagem** (o texto faz parte da arte), na disposição
+  acima; use **exatamente** o texto fornecido (sem inventar, traduzir ou trocar
+  palavras), além de gerar os **ícones e formas**.

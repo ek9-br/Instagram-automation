@@ -49,5 +49,6 @@ esquerda. Sem divisão em colunas — é uma imagem única com o texto por cima.
 - Divisores (quando usados) separam blocos de texto no mesmo eixo esquerdo.
 - Logo no rodapé esquerdo; tagline secundária, quando houver, no rodapé direito.
 - Respeitar **safe area** do formato; nada crítico nas bordas.
-- O **texto do layout** é renderizado por cima na arte — a **foto/IA não traz texto,
-  letras ou números embutidos** (apenas a cena/pessoa).
+- A **IA renderiza o texto NA imagem** (o texto faz parte da arte), na disposição
+  acima; use **exatamente** o texto fornecido (sem inventar, traduzir ou trocar
+  palavras), além de gerar a cena/pessoa.

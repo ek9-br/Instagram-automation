@@ -31,4 +31,6 @@ ao fundo como profundidade/atmosfera), nunca competindo com o texto.
 - O visual esmaecido **não compete** com o texto.
 - Hierarquia: (eyebrow/ordinal <) headline > conteúdo > fechamento (> CTA).
 - Respeitar **safe area** (salvo o visual que sangra à esquerda).
-- A **foto/IA não traz texto embutido** — gera só o mockup/ilustração/objeto e formas.
+- A **IA renderiza o texto NA imagem** (o texto faz parte da arte), na disposição
+  acima; use **exatamente** o texto fornecido (sem inventar, traduzir ou trocar
+  palavras), além de gerar o mockup/ilustração/objeto esmaecido e as formas.

@@ -76,6 +76,7 @@ export function formatOf(unit: ImageUnit): MetaFormat | undefined {
 export type CreativeStatus =
   | "idle"
   | "generating" // gerando a imagem crua
+  | "revising" // worker regerando prompt+imagem a partir do comentário de revisão
   | "safezoning" // aplicando a safezone preta
   | "regenerating" // regerando na OpenAI para trocar o fundo preto
   | "error";
@@ -110,6 +111,10 @@ export interface Creative {
   safezoneUrl: string | null; // 2) safezone preta aplicada
   finalUrl: string | null; // 3) regerada: fundo preto trocado por continuação natural
   error: string | null;
+  // Revisão: comentário do humano → worker gera novo prompt + nova imagem (rawUrl).
+  revision?: string;
+  revisionStatus?: "idle" | "requested" | "done" | "error";
+  revisionNote?: string; // resumo do que a revisão aprendeu/alterou (estilo)
 }
 
 export function creativeFormatOf(c: Creative): CreativeFormat | undefined {

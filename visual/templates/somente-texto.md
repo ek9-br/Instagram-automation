@@ -33,4 +33,6 @@ discretas** da marca. O **texto é o protagonista**, ocupando a maior parte da p
 - Hierarquia clara: eyebrow < bloco principal > apoio > destaque em caixa.
 - Bastante respiro ao redor do texto; **safe area** respeitada.
 - Se houver "destaque em caixa", ele se diferencia por contorno/bloco, não por foto.
-- Todo o texto é parte do layout (renderizado na arte); não há cena de imagem a gerar.
+- A **IA renderiza o texto NA imagem** (o texto é a arte); use **exatamente** o texto
+  fornecido (sem inventar, traduzir ou trocar palavras). Sem fotos; só texto, ícones
+  e formas discretas.

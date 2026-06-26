@@ -33,5 +33,6 @@ Tudo alinhado ao **centro** (não há colunas laterais).
 - O selo/ícone central conecta visualmente a imagem ao texto.
 - Headline ocupa boa parte da base, com peso de destaque; sem competir com a imagem.
 - Respeitar **safe area** do formato; nada crítico nas bordas.
-- O **headline/copy** é renderizado por cima na arte — a **foto/IA não traz o texto
-  da peça embutido** (a composição é pessoa + mockup + formas).
+- A **IA renderiza o texto NA imagem** (o texto faz parte da arte), na disposição
+  acima; use **exatamente** o texto fornecido (sem inventar, traduzir ou trocar
+  palavras), além de gerar pessoa, mockup e formas.

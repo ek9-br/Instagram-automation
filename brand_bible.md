@@ -94,7 +94,9 @@ relatórios, **integração contábil/ERP**, relógios **homologados**.
   natural suave, foco nítido, fundo levemente desfocado, teal/verde como apoio sutil.
 - **O que evitar:** ilustração/flat/3D/cartoon/ícone como elemento principal,
   dashboards/telas fictícias, banco de imagem clichê ("aperto de mão corporativo",
-  "executivo de gravata" datado), texto embutido na arte, logos de terceiros.
+  "executivo de gravata" datado), logos de terceiros. **O texto da peça (headline,
+  copy, CTA) DEVE ser renderizado na arte** — evitar apenas texto inventado, com erro
+  de ortografia ou diferente do fornecido.
 - **Logo:** versão de maior contraste com o fundo; canto, discreto, com respiro.
 
 ### Links úteis (para CTA / "saiba mais")

@@ -58,6 +58,9 @@ export default function JobResult({ jobId }: { jobId: string }) {
   const [refsByIdx, setRefsByIdx] = useState<Record<number, string[]>>({});
   const [promptBusy, setPromptBusy] = useState<Record<number, boolean>>({});
   const [finalBusy, setFinalBusy] = useState(false);
+  // revisão da imagem (comentário do humano → worker regera prompt+imagem)
+  const [revDraft, setRevDraft] = useState<Record<number, string>>({});
+  const [revBusy, setRevBusy] = useState<Record<number, boolean>>({});
 
   // edição do conteúdo gerado
   const [draft, setDraft] = useState<PostResponse | null>(null);
@@ -106,6 +109,12 @@ export default function JobResult({ jobId }: { jobId: string }) {
     if (!draft && job?.status === "done" && job.response) {
       setDraft(structuredClone(job.response));
       setComments(job.comments ?? {});
+      // semeia as imagens já geradas (pelo worker) para aparecerem na tela
+      const seeded: Record<number, string> = {};
+      job.response.image_prompts.forEach((p, i) => {
+        if (p.image_url) seeded[i] = p.image_url;
+      });
+      if (Object.keys(seeded).length) setImgByIdx(seeded);
     }
   }, [job, draft]);
 
@@ -214,6 +223,68 @@ export default function JobResult({ jobId }: { jobId: string }) {
       setErrByIdx((m) => ({ ...m, [idx]: e instanceof Error ? e.message : String(e) }));
     } finally {
       setBusyIdx(null);
+    }
+  }
+
+  // ---- Prompt de revisão (worker regera prompt + imagem; aprende regras) ----
+  async function gerarRevisao(i: number) {
+    if (!draft) return;
+    const text = (revDraft[i] ?? "").trim();
+    if (!text) {
+      alert("Escreva o comentário de revisão antes de aplicar.");
+      return;
+    }
+    const requested: PostResponse = {
+      ...draft,
+      image_prompts: draft.image_prompts.map((p, idx) =>
+        idx === i ? { ...p, revision: text, revision_status: "requested", revision_note: undefined } : p
+      ),
+    };
+    setDraft(requested);
+    setRevBusy((b) => ({ ...b, [i]: true }));
+    setErrByIdx((m) => ({ ...m, [i]: "" }));
+    try {
+      await saveJobContent(jobId, requested, comments);
+      setDirty(false);
+      for (let t = 0; t < 120; t++) {
+        await sleep(3000);
+        const j = await fetchJob(jobId);
+        const filled = j?.response?.image_prompts?.[i];
+        if (filled && filled.revision_status === "done") {
+          setDraft((d) =>
+            d
+              ? {
+                  ...d,
+                  image_prompts: d.image_prompts.map((p, idx) =>
+                    idx === i
+                      ? {
+                          ...p,
+                          prompt: filled.prompt ?? p.prompt,
+                          negative: filled.negative ?? p.negative,
+                          image_url: filled.image_url ?? p.image_url,
+                          revision_note: filled.revision_note,
+                          revision_status: "done",
+                          revision: "",
+                        }
+                      : p
+                  ),
+                }
+              : d
+          );
+          if (filled.image_url) setImgByIdx((m) => ({ ...m, [i]: filled.image_url as string }));
+          setRevDraft((m) => ({ ...m, [i]: "" }));
+          return;
+        }
+        if (filled && filled.revision_status === "error") {
+          setErrByIdx((m) => ({ ...m, [i]: `Falha na revisão: ${filled.revision_note ?? ""}` }));
+          return;
+        }
+      }
+      setErrByIdx((m) => ({ ...m, [i]: "Tempo esgotado esperando o worker. O worker local está rodando?" }));
+    } catch (e) {
+      setErrByIdx((m) => ({ ...m, [i]: e instanceof Error ? e.message : String(e) }));
+    } finally {
+      setRevBusy((b) => ({ ...b, [i]: false }));
     }
   }
 
@@ -327,6 +398,9 @@ export default function JobResult({ jobId }: { jobId: string }) {
               {draft.image_prompts.map((p, i) => {
                 const requesting = promptBusy[i] || p.prompt_status === "requested";
                 const hasPrompt = !!p.prompt?.trim();
+                const shownImg = imgByIdx[i] ?? p.image_url;
+                const hasImage = !!shownImg;
+                const revising = revBusy[i] || p.revision_status === "requested";
                 return (
                   <li key={i}>
                     <div className="prompt-head">
@@ -412,23 +486,49 @@ export default function JobResult({ jobId }: { jobId: string }) {
                         title={!hasPrompt ? "Gere o prompt antes de gerar a imagem" : undefined}
                         onClick={() => void gerarImagem(i, p.prompt, p.aspect)}
                       >
-                        {busyIdx === i ? "Gerando…" : imgByIdx[i] ? "Gerar nova versão" : "Gerar imagem"}
+                        {busyIdx === i ? "Gerando…" : hasImage ? "Gerar nova versão" : "Gerar imagem"}
                       </button>
                       {busyIdx === i && (
                         <span className="gen-status">
                           <span className="spinner" /> Gerando imagem na OpenAI… pode levar ~1 min.
                         </span>
                       )}
-                      {imgByIdx[i] && (
+                      {shownImg && (
                         <img
                           className="prompt-thumb"
-                          src={imgByIdx[i]}
+                          src={shownImg}
                           alt={`Imagem ${i + 1}`}
                           title="Clique para ampliar"
-                          onClick={() => setLightbox(imgByIdx[i])}
+                          onClick={() => setLightbox(shownImg)}
                         />
                       )}
                     </div>
+
+                    {hasImage && (
+                      <div className="revision-box">
+                        <span>Prompt de revisão</span>
+                        <textarea
+                          rows={2}
+                          value={revDraft[i] ?? ""}
+                          placeholder="Comentário do revisor (ex.: headline maior, pessoa à esquerda, fundo mais escuro)…"
+                          disabled={revising}
+                          onChange={(e) => setRevDraft((m) => ({ ...m, [i]: e.target.value }))}
+                        />
+                        <button
+                          className="btn small"
+                          disabled={revising || !(revDraft[i] ?? "").trim()}
+                          onClick={() => void gerarRevisao(i)}
+                        >
+                          {revising ? "Revisando…" : "Aplicar revisão e regerar"}
+                        </button>
+                        {revising && (
+                          <span className="gen-status">
+                            <span className="spinner" /> O worker está regerando prompt + imagem…
+                          </span>
+                        )}
+                        {p.revision_note && <p className="muted small">🧠 {p.revision_note}</p>}
+                      </div>
+                    )}
                     {errByIdx[i] && <p className="error-banner">{errByIdx[i]}</p>}
                   </li>
                 );

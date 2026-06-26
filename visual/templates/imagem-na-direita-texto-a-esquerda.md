@@ -52,5 +52,6 @@ O visual da direita nunca cobre o texto da esquerda.
 - Hierarquia: eyebrow < headline > conteúdo (subtítulo/lista) > fechamento (> CTA).
 - O visual da direita (pessoa/mockup) **não invade** a área de texto.
 - Respeitar **safe area**; nada crítico nas bordas (salvo o visual que sangra à direita).
-- O **texto do layout** é renderizado por cima na arte — a **foto/IA não traz texto,
-  letras ou números embutidos**; ela gera apenas a **pessoa, o mockup e as formas**.
+- A **IA renderiza o texto NA imagem** (o texto faz parte da arte), na disposição
+  acima; use **exatamente** o texto fornecido (sem inventar, traduzir ou trocar
+  palavras), além de gerar pessoa, mockup e formas.

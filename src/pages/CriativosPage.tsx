@@ -21,6 +21,7 @@ const BG_REPLACE_PROMPT =
 const STATUS_LABEL: Record<CreativeStatus, string> = {
   idle: "—",
   generating: "Gerando imagem…",
+  revising: "Revisando (worker)…",
   safezoning: "Aplicando safezone…",
   regenerating: "Regerando com safezone…",
   error: "Erro",
@@ -46,6 +47,8 @@ export default function CriativosPage() {
   const { user, signOut } = useAuth();
   const [lightbox, setLightbox] = useState<{ url: string; formatId: string } | null>(null);
   const [showSafezone, setShowSafezone] = useState(false);
+  // rascunho do comentário de revisão por criativo (só persiste ao aplicar)
+  const [revDraft, setRevDraft] = useState<Record<string, string>>({});
 
   function openLightbox(url: string, formatId: string) {
     setShowSafezone(false);
@@ -62,7 +65,30 @@ export default function CriativosPage() {
   }
 
   const busy = (c: Creative) =>
-    c.status === "generating" || c.status === "safezoning" || c.status === "regenerating";
+    c.status === "generating" ||
+    c.status === "revising" ||
+    c.status === "safezoning" ||
+    c.status === "regenerating";
+
+  // Revisão: registra o comentário do humano e marca para o worker regerar
+  // prompt + imagem (e, se for regra durável, atualizar estilo/template). O
+  // Realtime traz a imagem nova de volta automaticamente.
+  function aplicarRevisao(c: Creative) {
+    const text = (revDraft[c.id] ?? "").trim();
+    if (!text) {
+      alert("Escreva o comentário de revisão antes de aplicar.");
+      return;
+    }
+    upsertCreative({
+      ...c,
+      revision: text,
+      revisionStatus: "requested",
+      revisionNote: undefined,
+      status: "revising",
+      error: null,
+    });
+    setRevDraft((m) => ({ ...m, [c.id]: "" }));
+  }
 
   // 1) Gera a imagem crua a partir do prompt (+ referências). Reseta as etapas seguintes.
   async function gerar(c: Creative) {
@@ -237,6 +263,26 @@ export default function CriativosPage() {
                     disabled={busy(c)}
                     onChange={(e) => patch(c, { prompt: e.target.value })}
                   />
+                  {c.rawUrl && (
+                    <div className="revision-box">
+                      <span className="muted small">Prompt de revisão</span>
+                      <textarea
+                        rows={2}
+                        value={revDraft[c.id] ?? ""}
+                        placeholder="Comentário do revisor (ex.: deixe o fundo mais escuro, headline maior)…"
+                        disabled={busy(c)}
+                        onChange={(e) => setRevDraft((m) => ({ ...m, [c.id]: e.target.value }))}
+                      />
+                      <button
+                        className="btn small"
+                        disabled={busy(c) || !(revDraft[c.id] ?? "").trim()}
+                        onClick={() => aplicarRevisao(c)}
+                      >
+                        {c.status === "revising" ? "Revisando…" : "Aplicar revisão e regerar"}
+                      </button>
+                      {c.revisionNote && <p className="muted small">🧠 {c.revisionNote}</p>}
+                    </div>
+                  )}
                 </td>
                 <td>
                   <ReferenceImages
