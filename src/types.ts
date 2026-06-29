@@ -7,8 +7,8 @@ export type PostStatus = "ideia" | "texto_gerado" | "pronto";
 // Proporção da arte para posts/carrosséis.
 export type Proporcao = "3_4" | "1_1";
 export const PROPORCOES: { id: Proporcao; label: string }[] = [
+  { id: "1_1", label: "1:1 (1080×1080)" }, // padrão
   { id: "3_4", label: "3:4 (1080×1440)" },
-  { id: "1_1", label: "1:1 (1080×1080)" },
 ];
 
 export interface Option {

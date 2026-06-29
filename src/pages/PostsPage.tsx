@@ -17,7 +17,7 @@ function emptyPost(): Post {
     ctaId: null,
     legendaId: null,
     templateId: null,
-    proporcao: "3_4",
+    proporcao: "1_1",
     slidesCount: 3,
     status: "ideia",
     jobId: null,
@@ -136,7 +136,7 @@ export default function PostsPage() {
     try {
       const { job_id } = await createJob({
         tipo: post.tipo,
-        proporcao: post.proporcao ?? "3_4",
+        proporcao: post.proporcao ?? "1_1",
         tema: post.tema,
         slides_count: post.slidesCount,
         sentimento_ids: post.sentimentoIds,
@@ -241,7 +241,7 @@ export default function PostsPage() {
                     <span className="muted">—</span>
                   ) : (
                     <select
-                      value={post.proporcao ?? "3_4"}
+                      value={post.proporcao ?? "1_1"}
                       onChange={(e) => patch(post, { proporcao: e.target.value as Proporcao })}
                     >
                       {PROPORCOES.map((p) => (

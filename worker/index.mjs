@@ -153,9 +153,16 @@ async function generatePromptFor(response, ip, { revision } = {}) {
   const estiloMd = ip.estilo ? await readMd(`visual/estilos/${slugify(ip.estilo)}.md`) : "";
   // Texto que DEVE aparecer renderizado na imagem (copy da peça).
   const textoImagem = slide ? [slide.title, slide.body].filter(Boolean).join("\n") : "";
+  // Dimensão explícita (a Claude não deve deduzir a proporção pelo nome do formato).
+  const DIMENSOES = {
+    square: "1:1 quadrado (1080×1080 px)",
+    portrait: "3:4 retrato (1080×1440 px)",
+    landscape: "1.91:1 paisagem (1200×628 px)",
+  };
+  const dimLabel = DIMENSOES[ip.aspect] ?? `aspecto ${ip.aspect}`;
   const userPrompt = [
     "Você é o image-prompt-writer. Leia os arquivos design_system.md e brand_bible.md (na raiz do projeto) e gere UM prompt de imagem em português do Brasil para a peça abaixo.",
-    `Marca: ${response.brand}. Formato: ${response.format} (aspecto: ${ip.aspect}).`,
+    `Marca: ${response.brand}. Proporção da arte: ${dimLabel} (aspecto "${ip.aspect}"). NÃO use outra proporção/dimensão além desta.`,
     `Template visual: "${ip.template ?? ""}". Estilo visual: "${ip.estilo ?? ""}".`,
     tmplMd && `\nREGRAS DO TEMPLATE (layout — disposição de texto/imagem/botões; siga à risca):\n${tmplMd}`,
     estiloMd && `\nREGRAS DO ESTILO (fonte, tamanho/cores de texto, cores de fundo, sombra, transparências; siga à risca):\n${estiloMd}`,
